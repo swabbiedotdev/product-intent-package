@@ -207,3 +207,15 @@ cases:
   - id: negative-ordinary-coding
     prompt: Refactor this utility module without changing behavior.
     should_activate: false
+
+  - id: enriched-diagram-presentation
+    prompt: Refresh the PIP diagrams for a product with persisted request identities, one product-significant unique index, and a reconciliation sequence. Preserve its current behavior and use the skill's recommended presentation.
+    should_activate: true
+    must:
+      - prefer consistent dark-mode styling unless the project specifies another theme
+      - show product-significant attributes in custom table nodes with type, key or rule, and matching textual and colored index badges
+      - keep the complete index definition and purpose in its entity's attached INDEXES compartment
+      - number sequence messages and use left-aligned notes for consequential execution and data details
+      - preserve process ownership, input provenance, recovery semantics, and direct links to the owning data model
+      - check actual rendering and preserve the same information in supported Mermaid and adjacent Markdown if HTML labels or styles are unavailable
+      - avoid relaxed security settings, invented coordination mechanisms, and optional artifacts added only to demonstrate a style

@@ -26,6 +26,10 @@ rectangular condition node. Keep runtime selection logic in a rule, decision
 table, or sequence.
 
 ```mermaid
+---
+config:
+  theme: dark
+---
 flowchart TD
   %% Label the flow with its FLOW-* ID. Use ACTOR-* and SCREEN-* IDs where
   %% applicable, and phrase each node as an actor action or visible product

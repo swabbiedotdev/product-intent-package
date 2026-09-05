@@ -9,6 +9,10 @@ Do not show screen navigation, message order, entity fields, or detailed state
 transitions.
 
 ```mermaid
+---
+config:
+  theme: dark
+---
 flowchart LR
   %% Add only the physical participants in the current intended product.
   %% Label each node with its ARCH-* ID when cross-referenced, runtime or

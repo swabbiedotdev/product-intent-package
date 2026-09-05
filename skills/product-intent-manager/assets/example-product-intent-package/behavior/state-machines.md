@@ -3,6 +3,10 @@
 ## SM-001 Counter lifecycle
 
 ```mermaid
+---
+config:
+  theme: dark
+---
 stateDiagram-v2
   [*] --> Open: Seed below the fixed target
   Open --> Complete: SEQ-001 commits the increment that reaches the target

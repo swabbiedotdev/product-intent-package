@@ -18,10 +18,11 @@ capabilities:
     actor_ids:
       - ACTOR-001
     outcome: The persisted value and target are visible, each accepted request advances progress once, and reaching the target completes the counter.
+    acceptance_ref: acceptance.yaml
 exclusions:
   - Authentication, accounts, and multi-tenancy
   - Changing or resetting the target
 success_measures:
   - Every accepted request changes the persisted value exactly once and has one durable receipt.
-  - The user sees the persisted progress after loading, incrementing, or reconciling an unknown outcome.
+  - Loading shows current persisted progress; increment completion and receipt-based reconciliation show the recorded outcome of that request.
   - The counter becomes complete at the target and cannot advance beyond it.

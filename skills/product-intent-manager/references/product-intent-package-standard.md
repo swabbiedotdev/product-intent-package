@@ -298,6 +298,10 @@ does not make its artifact type mandatory.
   and link to them instead of converting them for cosmetic consistency.
 - Track the package in Git.
 
+Recommend consistent dark-mode diagrams and the enriched ERD and sequence
+styles in [Diagram Presentation](diagram-presentation.md). Presentation does
+not change artifact responsibilities or require otherwise unnecessary detail.
+
 ## Engineering discretion and implementation anchors
 
 Engineering may choose frameworks, internal modules, algorithms, naming,

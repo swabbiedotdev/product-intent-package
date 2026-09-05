@@ -3,6 +3,10 @@
 `ARCH-001` through `ARCH-004` provide `CAP-001` for Counter 1.0.
 
 ```mermaid
+---
+config:
+  theme: dark
+---
 flowchart LR
   ACTOR_001["ACTOR-001 User"] -->|reads and increments| ARCH_001
   subgraph ARCH_004["ARCH-004 Production environment"]

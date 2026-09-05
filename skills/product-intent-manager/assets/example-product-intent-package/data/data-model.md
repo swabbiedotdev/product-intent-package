@@ -8,11 +8,31 @@ The exact physical tables are `counter` for `DATA-001` and
 `counter_increment_receipt` for `DATA-002`.
 
 ```mermaid
-flowchart LR
-  DATA_001["<b>DATA-001 · counter</b><br/>id UUID PK<br/>value INTEGER · not null; minimum 0<br/>target INTEGER · not null; greater than 0<br/>state TEXT · open or complete<br/>updated_at TIMESTAMPTZ · not null"]
-  DATA_002["<b>DATA-002 · counter_increment_receipt</b><br/>id UUID PK<br/>counter_id UUID FK<br/>request_key UUID UK [U1·1]<br/>value_after INTEGER · not null<br/>state_after TEXT · open or complete<br/>created_at TIMESTAMPTZ · not null<br/><br/><b>INDEXES</b><br/>[U1] counter_increment_request_key<br/>UNIQUE BTREE (request_key ASC)<br/>Supports RULE-001 and SEQ-001: replay-safe increment"]
+---
+config:
+  theme: dark
+  flowchart:
+    htmlLabels: true
+  themeCSS: |
+    .pip-entity { border-collapse: collapse; background: #111827; color: #e5edf5; text-align: left; }
+    .pip-entity th, .pip-entity td { border: 1px solid #344556; padding: 8px 12px; text-align: left; }
+    .pip-entity th { background: #263544; color: #e5edf5; }
+    .pip-entity code { color: #e5edf5; font-family: monospace; }
+    .unique-badge { display: inline-block; background: #163c2a; color: #b8f5cb; border: 1px solid #6fd38a; border-radius: 4px; padding: 2px 5px; }
+---
+flowchart TB
+  DATA_001["<table class='pip-entity'><tr><th colspan='4'>DATA-001 · counter</th></tr><tr><th>ATTRIBUTE</th><th>TYPE</th><th>KEY / RULE</th><th>INDEX BADGE</th></tr><tr><td><code>id</code></td><td><code>UUID</code></td><td>PK</td><td></td></tr><tr><td><code>value</code></td><td><code>INTEGER</code></td><td>Not null; minimum 0</td><td></td></tr><tr><td><code>target</code></td><td><code>INTEGER</code></td><td>Not null; greater than 0</td><td></td></tr><tr><td><code>state</code></td><td><code>TEXT</code></td><td>open or complete</td><td></td></tr><tr><td><code>updated_at</code></td><td><code>TIMESTAMPTZ</code></td><td>Not null</td><td></td></tr></table>"]
+  DATA_002["<table class='pip-entity'><tr><th colspan='4'>DATA-002 · counter_increment_receipt</th></tr><tr><th>ATTRIBUTE</th><th>TYPE</th><th>KEY / RULE</th><th>INDEX BADGE</th></tr><tr><td><code>id</code></td><td><code>UUID</code></td><td>PK</td><td></td></tr><tr><td><code>counter_id</code></td><td><code>UUID</code></td><td>FK → counter.id</td><td></td></tr><tr><td><code>request_key</code></td><td><code>UUID</code></td><td>UK</td><td><span class='unique-badge'>[U1·1]</span></td></tr><tr><td><code>value_after</code></td><td><code>INTEGER</code></td><td>Not null</td><td></td></tr><tr><td><code>state_after</code></td><td><code>TEXT</code></td><td>open or complete</td><td></td></tr><tr><td><code>created_at</code></td><td><code>TIMESTAMPTZ</code></td><td>Not null</td><td></td></tr><tr><th colspan='4'>INDEXES</th></tr><tr><td><span class='unique-badge'>[U1]</span></td><td colspan='3'><code>counter_increment_request_key</code><br/>UNIQUE BTREE (request_key ASC)<br/>Supports RULE-001 and SEQ-001: replay-safe increment;<br/>SEQ-002: original-request reconciliation</td></tr></table>"]
   DATA_001 -->|"one counter records zero or more receipts"| DATA_002
+  classDef entity fill:#111827,stroke:#8ea0b3,color:#e5edf5
+  class DATA_001,DATA_002 entity
 ```
+
+Legend: green `[U1]` identifies one unique index; `[U1·1]` marks its first
+ordered key. Routine primary keys remain `PK`. Index behavior belongs to
+[RULE-001](../behavior/rules.yaml),
+[SEQ-001](../sequences/sequences.md#seq-001-increment-once), and
+[SEQ-002](../sequences/sequences.md#seq-002-load-or-reconcile-progress).
 
 There is exactly one counter record, seeded at deployment with `value: 0`, a
 fixed positive target, and `state: open`. `RULE-001` owns increment and

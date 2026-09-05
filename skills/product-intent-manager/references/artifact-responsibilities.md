@@ -217,17 +217,45 @@ predicate, expressions, and included columns. If no canonical index applies,
 show the exact key lookup, join, filter, or mutation fields instead.
 
 ```mermaid
+---
+config:
+  theme: dark
+  sequence:
+    noteAlign: left
+    noteFontSize: 14
+    noteFontFamily: Arial
+  themeCSS: |
+    .noteText { font-family: Arial !important; font-size: 14px !important; }
+  themeVariables:
+    noteBkgColor: '#242626'
+    noteTextColor: '#e5edf5'
+---
 sequenceDiagram
+  autonumber
   participant Worker
   participant DB as PostgreSQL
   Worker->>DB: Claim the next eligible Job
-  Note right of DB: READ/UPDATE · DATA-006 pipeline_job<br/>ACCESS · [P2] pipeline_job_queue_arrival_idx<br/>INPUT · kind <- claim parameter; status <- queued state constant
+  Note right of DB: READ/UPDATE · DATA-006 pipeline_job<br/>ACCESS · [P2] pipeline_job_queue_arrival_idx<br/>INPUT · kind <- claim parameter, status <- queued state constant
 ```
 
 Without an applicable canonical index:
 
 ```mermaid
+---
+config:
+  theme: dark
+  sequence:
+    noteAlign: left
+    noteFontSize: 14
+    noteFontFamily: Arial
+  themeCSS: |
+    .noteText { font-family: Arial !important; font-size: 14px !important; }
+  themeVariables:
+    noteBkgColor: '#242626'
+    noteTextColor: '#e5edf5'
+---
 sequenceDiagram
+  autonumber
   participant Backend
   participant DB as PostgreSQL
   Backend->>DB: Load the selected Match

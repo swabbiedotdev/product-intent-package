@@ -45,7 +45,7 @@ scenarios:
     when:
       - accepted increments are measured under concurrent load
     then:
-      - p95 accepted-increment latency is no more than 500 milliseconds
+      - accepted-increment latency meets QC-001
       - the final persisted value accounts for every accepted increment
       - every accepted request has exactly one durable receipt
 
@@ -78,7 +78,7 @@ scenarios:
     then:
       - the API returns the original request's durable receipt
       - the client does not create a second increment request
-      - the screen displays the current persisted value of 5
+      - the screen displays the original request's recorded resulting value of 5
       - exactly one mutation has occurred
 
   - id: ACC-006
@@ -99,3 +99,35 @@ scenarios:
       - the counter state is complete
       - the screen shows Target reached without an Increment action
       - another increment cannot advance the value
+
+  - id: ACC-007
+    name: Recover when reconciliation cannot yet resolve an increment
+    verifies:
+      - CAP-001
+      - RULE-001
+      - SEQ-002
+    given:
+      - an increment has an unknown outcome and its request key is retained
+    when:
+      - a reconciliation read fails
+    then:
+      - Retry repeats reconciliation for that same request key
+      - Increment and Dismiss remain unavailable
+      - the screen does not claim the increment failed or left progress unchanged
+
+  - id: ACC-008
+    name: Retry while the original transaction may still be running
+    verifies:
+      - CAP-001
+      - RULE-001
+      - SEQ-001
+      - SEQ-002
+    given:
+      - an increment has an unknown outcome
+      - a successful reconciliation read finds no receipt
+    when:
+      - the user chooses Retry
+    then:
+      - the screen describes the outcome as unconfirmed until resolved
+      - the retry uses the original request key
+      - concurrent original and retry attempts cannot create more than one increment or receipt

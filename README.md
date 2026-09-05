@@ -117,6 +117,13 @@ State machines and user flows intentionally omit sequence-level detail.
 Deployment normally belongs in stack context and becomes separate only when its
 topology is too complex to remain readable.
 
+Recommend dark-mode diagrams, custom table-shaped ERDs with index badges and
+attached compartments, and numbered sequences with left-aligned execution
+notes. See [diagram presentation](skills/product-intent-manager/references/diagram-presentation.md)
+and the [worked example](skills/product-intent-manager/assets/example-product-intent-package/product.yaml).
+Use simpler diagrams when extra detail adds no meaning; presentation does not
+make optional artifacts or runtime mechanisms mandatory.
+
 Structured records use YAML (`.yaml`). Mermaid sources use fenced `mermaid`
 blocks in Markdown (`.md`), including diagram-only files. Copied external
 sources keep their required formats.

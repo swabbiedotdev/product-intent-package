@@ -5,6 +5,16 @@ target for `SCREEN-001` in the example. It deliberately leaves typography,
 color, spacing tokens, and framework choice to implementation.
 
 ```mermaid
+---
+config:
+  theme: dark
+  flowchart:
+    nodeSpacing: 18
+    rankSpacing: 18
+  themeVariables:
+    clusterBkg: '#18222d'
+    clusterBorder: '#344556'
+---
 flowchart TB
   subgraph ENTRY["Load and recovery"]
     direction LR
@@ -13,9 +23,19 @@ flowchart TB
       L_TITLE["Shared progress"] ~~~ L_VALUE["Loading…"] ~~~ L_ACTION["Increment unavailable"]
     end
 
-    subgraph ERROR["Confirmed failure"]
+    subgraph ERROR["Confirmed increment failure"]
       direction TB
-      E_TITLE["Shared progress"] ~~~ E_VALUE["Progress unavailable or unchanged"] ~~~ E_ACTION["Retry"]
+      E_TITLE["Shared progress"] ~~~ E_VALUE["Progress unchanged"] ~~~ E_ACTION["Retry"]
+    end
+
+    subgraph READ_ERROR["Load or reconciliation read failure"]
+      direction TB
+      F_TITLE["Shared progress"] ~~~ F_VALUE["Progress unavailable"] ~~~ F_ACTION["Retry"]
+    end
+
+    subgraph UNKNOWN["Unconfirmed increment · retry available"]
+      direction TB
+      U_TITLE["Shared progress"] ~~~ U_VALUE["Outcome unconfirmed"] ~~~ U_ACTION["Retry"]
     end
   end
 
@@ -38,9 +58,10 @@ flowchart TB
   end
 ```
 
-Required variants are loading, ready/open, confirmed failure with Retry,
-incrementing, reconciling, and complete. `FLOW-001` owns when the user moves
-among them; this mockup owns their shared hierarchy and visible controls.
+Required variants are loading, ready/open, confirmed increment failure, read
+failure, unconfirmed increment with Retry available, incrementing, reconciling,
+and complete. [FLOW-001](../user-flows.md#flow-001-read-and-increment-the-counter)
+owns transitions; this mockup owns the shared hierarchy and visible controls.
 
 ## Current rationale
 
@@ -48,7 +69,7 @@ among them; this mockup owns their shared hierarchy and visible controls.
   completing one continuous goal rather than navigating among separate views.
 - Increment is unavailable while loading, incrementing, or reconciling because
   those states cannot safely accept another product action.
-- Retry replaces Increment after a confirmed failure because recovery is the
-  only useful next action on that variant.
+- Retry is the only action on failure and unconfirmed-result variants because
+  recovery must not expose a fresh Increment or Dismiss before resolution.
 - Complete replaces the action with `Target reached` because reset and target
   changes are outside this release.

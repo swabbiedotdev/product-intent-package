@@ -2,14 +2,28 @@
 
 ## FLOW-001 Read and increment the counter
 
-The flow takes place on `SCREEN-001 Counter screen`. Increment actions use
-`SEQ-001`; initial loads, retries, and unknown-outcome reconciliation use
-`SEQ-002`. Visible outcomes obey `RULE-001`.
+The flow takes place on `SCREEN-001 Counter screen`. Increment actions and
+their retries use [SEQ-001](../sequences/sequences.md#seq-001-increment-once);
+loads and reconciliation reads use
+[SEQ-002](../sequences/sequences.md#seq-002-load-or-reconcile-progress).
+Visible outcomes obey [RULE-001](../behavior/rules.yaml).
 
 **Exact local design target:**
 [`SCREEN-001 Counter screen`](mockups/screen-001-counter.md#screen-001-counter-screen)
 
 ```mermaid
+---
+config:
+  theme: dark
+  flowchart:
+    nodeSpacing: 70
+    rankSpacing: 90
+    curve: linear
+  themeVariables:
+    clusterBkg: '#18222d'
+    clusterBorder: '#344556'
+    edgeLabelBackground: '#1f2c38'
+---
 flowchart TD
   START(["ACTOR-001 opens Counter"])
 
@@ -24,11 +38,13 @@ flowchart TD
     SUBMITTING -->|target reached| COMPLETE
     SUBMITTING -->|failure confirmed| RETRY["Show unchanged value and Retry"]
     RETRY -->|Retry| SUBMITTING
-    RETRY -->|Dismiss| READY
     SUBMITTING -->|outcome unknown| RECONCILE["Show reconciling and prevent another increment"]
     RECONCILE -->|progress reconciled| READY
     RECONCILE -->|completion reconciled| COMPLETE
-    RECONCILE -->|not applied or read failed| RETRY
+    RECONCILE -->|outcome still unconfirmed; retry available| UNKNOWN["Show outcome unconfirmed and Retry"]
+    UNKNOWN -->|Retry| SUBMITTING
+    RECONCILE -->|read fails| READ_ERROR["Show reconciliation failure and Retry; Increment unavailable"]
+    READ_ERROR -->|Retry| RECONCILE
   end
 
   START --> LOADING
@@ -47,8 +63,9 @@ behavior belong to the linked sequences and `RULE-001`.
   about the persisted value.
 - The reconciling state blocks another increment because the prior request may
   already have committed; another request could create an unintended duplicate.
-- Retry is offered after a known unchanged result or a failed read because those
-  operations are safe to repeat.
+- Recovery distinguishes an unchanged result, an unconfirmed result, and a
+  failed read because Retry must perform the appropriate operation without
+  presenting an uncertain increment as a new action.
 - Completion removes Increment because the fixed target is the terminal product
   outcome and changing or resetting it is outside this release.
 - A native keyboard-operable button and announced state changes are necessary

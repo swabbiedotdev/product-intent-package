@@ -63,23 +63,12 @@ adequate spacing. Apply the recommended dark palette consistently. Keep
 long definitions wrapped and avoid shrinking text to fit an oversized canvas.
 Split by coherent data responsibility when necessary, preserving references.
 
-This abbreviated generic source demonstrates the table structure; apply the
-badge colors and typography consistently through the viewer's supported styles:
-
-```mermaid
----
-config:
-  theme: dark
-  flowchart:
-    htmlLabels: true
----
-flowchart TB
-  ACCOUNT["REFERENCE · DATA-001 · account"]
-  REQUEST["<table><tr><th colspan='4'>report_request</th></tr><tr><th>ATTRIBUTE</th><th>TYPE</th><th>KEY / RULE</th><th>INDEX BADGE</th></tr><tr><td>id</td><td>UUID</td><td>PK</td><td></td></tr><tr><td>account_id</td><td>UUID</td><td>FK; owning account</td><td></td></tr><tr><td>request_key</td><td>TEXT</td><td>Exact request identity</td><td>[U1·1]</td></tr><tr><th colspan='4'>INDEXES</th></tr><tr><td>[U1]</td><td colspan='3'>report_request_key<br/>UNIQUE BTREE (request_key ASC)<br/>Supports SEQ-001: one report request per request key</td></tr></table>"]
-  ACCOUNT ---|"one account owns zero or many requests"| REQUEST
-  classDef reference fill:transparent,stroke-dasharray:4 3
-  class ACCOUNT reference
-```
+The [Counter data model](../assets/example-product-intent-package/data/data-model.md)
+demonstrates the complete dark table style, per-attribute badges, an attached
+index compartment, and explicit cardinality. Its
+[sequences](../assets/example-product-intent-package/sequences/sequences.md)
+reference that same index without copying its definition. No lease or lock
+compartment is needed because the example has no such persisted mechanism.
 
 The established index suffix and one-badge-per-index rules still apply. Qualify
 cross-diagram badges by `DATA-*` and table because `[U1]` may occur on several
@@ -120,6 +109,13 @@ config:
   theme: dark
   sequence:
     noteAlign: left
+    noteFontSize: 14
+    noteFontFamily: Arial
+  themeCSS: |
+    .noteText { font-family: Arial !important; font-size: 14px !important; }
+  themeVariables:
+    noteBkgColor: '#242626'
+    noteTextColor: '#e5edf5'
 ---
 sequenceDiagram
   autonumber
