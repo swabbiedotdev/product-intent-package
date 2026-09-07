@@ -1,6 +1,6 @@
 # Diagram Presentation
 
-Recommend these enriched ERD and sequence styles for real application packages.
+Use the ERD format rules and recommended sequence style below for application packages.
 They make the data and execution context visible at the point where it matters.
 Keep sources in Markdown with fenced Mermaid. Use the same presentation across
 related files, adding only product-significant detail. These are presentation
@@ -40,11 +40,18 @@ UI theme.
 
 ## Custom table-shaped ERDs
 
-Use Mermaid `flowchart` with HTML table labels when the viewer supports them.
-This permits richer entity compartments than a plain `erDiagram`:
+For an ERD with product-significant indexes or persisted coordination, start
+with Mermaid `flowchart` and HTML table labels. This is the expected format,
+not an optional embellishment after a plain `erDiagram`. Follow the fallback
+below only for a project-requested format or an observed viewer limitation.
+Read the [worked notation example](erd-notation-example.md) before authoring;
+adapt its table structure and CSS, not its illustrative schema or mechanisms.
 
 - A prominent entity heading and four columns: `ATTRIBUTE`, `TYPE`,
-  `KEY / RULE`, and `INDEX BADGE`.
+  `KEY / RULE`, and `INDEX BADGE` (or `INDEX / COORDINATION` when both apply).
+  Put the `DATA-*` owner and exact physical table name in the entity heading,
+  not just a field comment. Qualify references by table when one DATA owner
+  covers several physical entities.
 - One row per product-significant physical column. Use monospace for field
   names, types, and index names; keep explanatory rules readable and wrapped.
 - An `INDEXES` compartment within the same entity, below its attributes. Each
@@ -63,6 +70,43 @@ adequate spacing. Apply the recommended dark palette consistently. Keep
 long definitions wrapped and avoid shrinking text to fit an oversized canvas.
 Split by coherent data responsibility when necessary, preserving references.
 
+### Build the entity as one visual
+
+1. Collect the product-significant physical fields and the required index and
+   persisted coordination definitions from their owners. Check compound and
+   conditional uniqueness stated in prose too. Do not guess a missing physical
+   definition or add a mechanism merely to fill a compartment.
+2. Put each field in its own attribute row. Keep type and key/rule in separate
+   cells. Put each badge in a styled `<span>` in the last cell; several badges
+   on one field remain separate spans. Text such as `U1.1` in a quoted Mermaid
+   field comment is not a substitute for a badge column.
+3. Append `<tr><th colspan='4'>INDEXES</th></tr>` inside that same `<table>`.
+   Each entry places its base badge in one cell and its physical name, complete
+   definition, and purpose in a `colspan='3'` cell. Use `<br/>` to separate those
+   lines. Include uniqueness, method, ordered keys/directions, expressions,
+   included columns, and predicate wherever present. Do not summarize a
+   compound key as `UNIQUE` on individual fields or a partial index as just
+   "unique when active".
+4. Append `COORDINATION` the same way, only when needed. Map the actual persisted
+   scope, owner/attempt, activity/expiry, and fence fields to their badges.
+   Include the protected resource and a direct link to the process owner.
+   Describe structure here; acquisition, renewal, expiry, retries, and stale-
+   owner rejection remain in the linked sequence. Do not turn a transient row
+   lock into an invented stored lock entity.
+5. Match badge colors between fields and compartments and include a textual
+   legend. Use the exact bracket/middle-dot notation: `[U1·1]`, `[P2·where]`,
+   `[LEASE1·owner]`. The
+   [index](artifact-responsibilities.md#product-significant-index-notation) and
+   [coordination](artifact-responsibilities.md#product-significant-lock-and-lease-notation)
+   rules own suffix meanings. `UK` is a constraint marker, not an index badge.
+
+`INDEXES` and `COORDINATION` are attached sections of their owning entity, not
+separate graph nodes, floating notes, or one Markdown table for several
+entities. Do not repeat full definitions in prose below the rendered entity.
+Use nearby Markdown links when the viewer cannot preserve links inside HTML
+labels; this does not require duplicating the definition. A diagram export
+should retain the fields, badges, definitions, and role mappings together.
+
 The [Counter data model](../assets/example-product-intent-package/data/data-model.md)
 demonstrates the complete dark table style, per-attribute badges, an attached
 index compartment, and explicit cardinality. Its
@@ -75,11 +119,23 @@ cross-diagram badges by `DATA-*` and table because `[U1]` may occur on several
 entities. Keep routine primary keys as `PK` unless their physical index has an
 independent product-significant purpose.
 
-HTML labels and custom CSS depend on the Markdown viewer. Check the rendered
-result in the intended viewer. Do not require relaxed security settings just
-to display a diagram. If tables or styles are unsupported, retain the same
-information in an ordinary Mermaid ERD with adjacent Markdown compartments;
-do not discard the index or coordination detail. Keep one maintained definition.
+### Viewer fallback and rendering check
+
+Check the rendered result, not just Mermaid parsing: table cells, dark text
+contrast, badge colors, attached compartments, relationship labels, and clipped
+or overlapping content. A missing local renderer means rendering is unverified;
+it does not establish that the target viewer rejects HTML. Keep the expected
+source format and report that limit. Do not enable relaxed security settings
+just to display a diagram.
+
+If the project explicitly requests plain ERDs, or the intended viewer actually
+rejects table labels, use ordinary Mermaid entities with the same exact textual
+badges and per-entity Markdown `INDEXES` / `COORDINATION` sections directly
+adjacent. Clearly identify the owning table on every section and preserve full
+definitions and role mappings. If only color/CSS is unsupported, keep the table
+structure and textual badges. State the chosen fallback and reason in the task
+response, not as implementation-status metadata inside the PIP. Keep one
+maintained definition; do not ship competing HTML and plain-ERD copies.
 
 ## Annotated sequences
 

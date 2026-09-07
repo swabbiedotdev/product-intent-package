@@ -30,13 +30,18 @@ to the owning sequence instead of copying its internals into those views.
 Recommend a dark-mode style for PIP diagrams: dark backgrounds, light readable
 text, subdued panels, and contrasting lines and badges. Apply it consistently
 to ERDs and sequence diagrams unless the project requests another theme.
-Prefer enriched diagram presentation: custom table-shaped ERDs with attribute,
-type, key/rule, and index-badge columns plus attached index/coordination
-compartments; numbered sequences with readable action arrows and adjacent,
-left-aligned notes for consequential data and execution details. Read
-[Diagram Presentation](references/diagram-presentation.md) when authoring either.
-Include only the detail that matters to the process; simpler diagrams remain
-appropriate when there is no extra information to convey.
+For ERDs with product-significant indexes or persisted coordination, use custom
+Mermaid `flowchart` table nodes: physical attribute, type, key/rule, and badge
+columns, with `INDEXES` and applicable `COORDINATION` compartments inside each
+owning entity. Plain `erDiagram` plus detached prose or index tables is not the
+default for these cases. Use exact badges such as `[U1·1]`, `[P2·where]`, and
+`[LEASE1·owner]`, not `U1.1` or an unexplained `C1` in a field comment.
+Before authoring an ERD, read [Diagram Presentation](references/diagram-presentation.md)
+and its [worked notation example](references/erd-notation-example.md). That
+reference defines the supported-viewer fallback; do not assume HTML is unsupported.
+Simple relationship-only ERDs may stay plain when no custom detail is needed.
+For sequences, prefer numbered action arrows and adjacent, left-aligned notes
+for consequential execution details; read Diagram Presentation before authoring.
 
 ## The canonical PIP is current intent
 

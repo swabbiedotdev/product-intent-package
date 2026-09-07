@@ -219,3 +219,27 @@ cases:
       - preserve process ownership, input provenance, recovery semantics, and direct links to the owning data model
       - check actual rendering and preserve the same information in supported Mermaid and adjacent Markdown if HTML labels or styles are unavailable
       - avoid relaxed security settings, invented coordination mechanisms, and optional artifacts added only to demonstrate a style
+
+  - id: erd-custom-info-is-not-a-prose-appendix
+    prompt: Update this PIP data diagram without changing its schema. It uses plain erDiagram, embeds U1.1 and C1 in field comments, puts a compound unique index in a separate diagram-wide Markdown table, and states a partial uniqueness constraint only in prose. Its existing persisted lease has an attempt and heartbeat, with expiry derived from the heartbeat plus the sequence's timeout. The target viewer supports HTML tables and CSS.
+    should_activate: true
+    must:
+      - read diagram presentation and the worked notation example before authoring
+      - use custom flowchart table nodes with physical field, type, key or rule, and badge columns
+      - attach complete INDEXES and applicable COORDINATION sections inside each owning entity
+      - use exact bracketed middle-dot badges with matching colors and a textual legend
+      - preserve all compound and conditional storage constraints, using P badges for partial unique indexes and full predicates
+      - map actual scope, attempt, heartbeat, and any fence fields without adding a fictional expiry column
+      - keep runtime lease handling in its sequence and link the entity's structural mapping to that owner
+      - avoid detached prose as a substitute for attached custom information and avoid duplicated full definitions
+      - verify rendered layout without relaxing security settings
+
+  - id: erd-fallback-requires-a-reason
+    prompt: Create the indexed PIP data view using the standard format. No local Mermaid renderer is installed; the target editor's HTML-table support is not yet checked. Put indexes in a separate Markdown appendix because HTML is probably unsupported.
+    should_activate: true
+    must:
+      - distinguish missing local verification from observed target-viewer incompatibility
+      - retain custom table-node source and report unverified rendering rather than assuming HTML is unsupported
+      - use the plain-ERD fallback only after observed incompatibility or an explicit project format choice
+      - preserve exact textual badges and per-entity complete compartments if fallback is required
+      - avoid installing dependencies, relaxing security, or creating a second maintained ERD only to bypass a missing renderer

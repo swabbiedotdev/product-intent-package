@@ -117,9 +117,10 @@ State machines and user flows intentionally omit sequence-level detail.
 Deployment normally belongs in stack context and becomes separate only when its
 topology is too complex to remain readable.
 
-Recommend dark-mode diagrams, custom table-shaped ERDs with index badges and
-attached compartments, and numbered sequences with left-aligned execution
-notes. See [diagram presentation](skills/product-intent-manager/references/diagram-presentation.md)
+Use custom table-shaped ERDs when product-significant indexes or persisted
+coordination need badges and attached compartments. Recommend dark-mode diagrams
+and numbered sequences with left-aligned execution notes.
+See [diagram presentation](skills/product-intent-manager/references/diagram-presentation.md)
 and the [worked example](skills/product-intent-manager/assets/example-product-intent-package/product.yaml).
 Use simpler diagrams when extra detail adds no meaning; presentation does not
 make optional artifacts or runtime mechanisms mandatory.

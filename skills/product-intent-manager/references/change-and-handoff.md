@@ -204,6 +204,12 @@ For an existing-product or design-led implementation, also check that:
 
 For product-significant database design, check that:
 
+- custom table nodes contain the owning entity's attribute badges and attached
+  index/coordination compartments, unless a project-requested format or observed
+  viewer limitation requires the documented fallback;
+- badges use brackets and explicit key/coordination role suffixes, match their
+  compartment entries, and account for compound and conditional uniqueness as
+  well as single-column constraints;
 - persisted columns that determine product behavior appear individually with
   exact physical names, types, and material constraints rather than synthetic
   grouped rows, while abbreviated cross-diagram references are clearly marked;

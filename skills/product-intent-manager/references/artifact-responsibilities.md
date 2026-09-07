@@ -325,9 +325,11 @@ its internal loop.
 
 ## Data models and ERDs
 
-Prefer the custom table-node presentation in
+For product-significant indexes or persisted coordination, use the custom
+table-node presentation in
 [Diagram Presentation](diagram-presentation.md#custom-table-shaped-erds) when
-fields, index badges, or coordination compartments carry product meaning.
+the viewer supports it. The attribute badges and attached compartments are one
+entity visual, not an ordinary ERD followed by a diagram-wide prose appendix.
 
 Use one data-model view for conceptual relationships and persisted entities.
 Show identity, ownership, relationships, cardinality, and product-significant
@@ -388,6 +390,15 @@ predicate or expression, included columns, owning query or process, and product
 purpose through a direct `SEQ-*`, `RULE-*`, or `QC-*` link. A candidate index
 belongs in an isolated PIP fork, not beside the canonical index with a proposal
 status.
+
+Document each product-significant storage uniqueness constraint this way,
+including compound and conditional uniqueness. A `UK` field label or a prose
+sentence such as "the pair is unique" does not identify a complete compound
+constraint. A partial unique index uses a `P` badge and states `UNIQUE` plus its
+full predicate. Do not hide these constraints behind a blanket "indexes are
+implementation detail" statement. Conversely, do not invent an index to enforce
+a logical rule whose physical enforcement is not specified; inspect the owning
+schema and process, and resolve any material design gap through PIP authority.
 
 ```text
 ATTRIBUTE               TYPE   KEY / CONSTRAINT   INDEX BADGE
@@ -467,6 +478,14 @@ the entity:
 Every coordination badge must identify the exact persisted physical column and
 type. Do not place a lease or lock role on a grouped field or a cross-diagram
 reference projection.
+
+Map all persisted roles used by the mechanism: scope, owner or attempt, expiry
+or activity timestamp, and fence when present. Use descriptive suffixes such as
+`·attempt` and `·heartbeat` when those are the actual roles. If expiry is derived
+from an activity timestamp and a timeout, state that mapping and link to the
+sequence that owns the timeout; do not invent an expiry column. A bare `C1`
+repeated on several fields does not explain their roles. Keep transient row
+locks distinct from the persisted attempt or lease state they update.
 
 ```text
 COORDINATION
