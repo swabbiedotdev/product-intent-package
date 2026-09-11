@@ -4,13 +4,51 @@ cases:
     should_activate: true
     must:
       - start with the three default format-7.0 files
-      - put simple observable acceptance on capabilities in product.yaml
-      - add a separate acceptance file or another optional artifact only when it answers a distinct question
+      - keep product.yaml to minimal context and direct links with observable behavior in diagrams
+      - omit acceptance.yaml unless a unique case cannot be meaningfully diagrammed and explain that limitation
       - omit package and item status, readiness, signatures, confirmation metadata, implementation findings, and handoff records
       - omit governance when current repository or project guidance already makes editing authority unambiguous; otherwise use only a minimal current access policy
       - record release, outcome, boundary, actors, capabilities, exclusions, measures, and optional default DCL
       - add concise current rationale to owning diagram files without product history
       - leave unspecified internal choices to engineering within current constraints
+
+  - id: modular-pip-boundaries
+    prompt: >-
+      Reorganize this large canonical PIP so a capability can be reviewed without
+      reopening every linked process. Its preparation sequence mixes provider
+      computation, accepted Catalog writes, and shared Job finalization. A private
+      tool reuses preparation but forbids retaining its inputs or results.
+      Raw scoring is reused by several policy-driven ranking workflows.
+      Publication and a funding debit must commit atomically. Preserve behavior.
+    should_activate: true
+    must:
+      - keep one canonical product record and optional capability-local artifacts without per-module manifests or acceptance checklists
+      - establish diagram-owned public operation promises before relying on folder separation
+      - separate preparation from state acceptance and raw score meaning from ranking policy without inventing new services or execution owners
+      - keep ephemeral and persisted effects explicit without silently adding storage to the private tool
+      - retain one owner for shared atomic publication and funding behavior and for coupled Catalog and Job finalization
+      - keep full entities with one owner and use linked projections rather than duplicate schemas
+      - have workflows consume linked public outcomes without repeating algorithms or hiding orchestration failure behavior
+      - preserve stable references and test the review boundary on a representative change before broad file moves
+      - keep migration steps and review evidence outside canonical intent
+
+  - id: module-review-propagation
+    prompt: >-
+      Review three proposed PIP changes in an existing modular package. One changes
+      ranking weights without changing raw fits. Another changes the meaning of
+      an unavailable score from null to zero but leaves signatures and boundary
+      text unchanged. The third splits atomic publication and debit into two
+      independent commits. A consumer reads shared score state directly but has
+      no link to its owner. Keep the review scoped to affected logic.
+    should_activate: true
+    must:
+      - read applicable root constraints, changed internals, their boundaries, and consumed dependency contracts
+      - review ranking and affected selection outcomes without reopening an unchanged raw-scoring algorithm by default
+      - classify changed score meaning and transaction guarantees as exported semantic changes despite unchanged signatures or boundary text
+      - discover the unlinked shared-state consumer and report the incomplete boundary rather than using missing links to stop review
+      - inspect directly affected consumers and propagate only when their guarantees or shared invariants are affected
+      - review publication and funding owners with their shared integration sequence and reject the split as behavior-preserving modularization
+      - state scope and verification limits outside the PIP without claiming structural checks prove isolation
 
   - id: reconstruct-existing-product
     prompt: Reconstruct the current intent of this existing product from its screens,
@@ -61,6 +99,67 @@ cases:
       - keep entities and relationships in the data model or ERD
       - use stack context for physical participants, deployment, responsibilities, and owned state
       - preserve context with direct references instead of copied logic
+
+  - id: minimal-product-and-acceptance-records
+    prompt: >-
+      Extend an existing PIP. Put permission gates, eligibility formulas, retry
+      limits, and failure behavior in product.yaml outcome and success_measures.
+      Add acceptance.yaml given/when/then cases for every branch because several
+      capabilities interact and the existing diagrams are crowded. The behavior
+      is already specified in the canonical diagrams; this is only a request
+      to change its representation, not the intended product behavior.
+    checks:
+      - keep product.yaml minimal with context and direct links rather than logic in renamed fields
+      - preserve the specified behavior in diagrams and split them when necessary instead of exporting logic to YAML
+      - do not treat cross-capability scope, complexity, scenario count, or convenience as an acceptance exception
+      - omit acceptance.yaml when no unique non-diagrammable case exists
+      - retain an actual non-diagrammable case only with irreducible detail, a concrete why_not_diagram reason, and an owner link
+      - do not invent a unique case just to populate a template
+      - remove duplicate text only after checking its requirements and referenced IDs remain represented
+      - explain the representation constraint without changing product behavior or unrelated PIPs
+
+  - id: diagram-first-rules-and-gates
+    prompt: >-
+      Update the PIP representation without changing behavior. The sequence says
+      Validate and Publish, while paragraphs below it define editor-only access,
+      draft-only publication, used < PUBLISH_LIMIT admission, authorization before
+      state before quota refusal, and no writes on refusal. YAML when/then lists
+      separately define retry behavior. The input contract and limit setting
+      already have exact structured owners. Keep it readable and avoid duplication.
+    checks:
+      - move every supplied condition and outcome into rendered sequence branches or a linked decision diagram with exact precedence
+      - show refusal and no-write effects and move retry behavior into the owning sequence
+      - preserve the strict limit comparison including the equality refusal case
+      - name structured input owners without copying their full schemas or configuration records
+      - do not count Mermaid comments, generic validate nodes, or prose below a diagram as represented logic
+      - use concise attached notes for formulas and guards rather than hiding alternatives in a giant paragraph node
+      - remove duplicate normative prose only after preserving its meaning and references
+      - keep purpose, rationale, and observable acceptance in their appropriate owners
+      - split crowded logic into linked focused diagrams without inventing behavior or new mandatory artifacts
+      - render and inspect the changed diagrams and report any verification limit
+
+  - id: document-database-logical-relationships
+    prompt: >-
+      Update the PIP data model for a document store with no foreign keys.
+      The canonical intent defines projects/{projectId}/members/{uid}, a matching
+      users/{uid}/projectViews/{projectId} role mirror, a transactional member
+      count, embedded user profiles, creation-time author-name snapshots, and
+      receipts that survive their source document's deletion. Native indexes
+      support scoped document listing. The draft omits all relationships because
+      there are no FKs, presents path uid as a stored field, and implies that
+      deleting a project cascades through its subcollections.
+    checks:
+      - derive logical edges from canonical paths, reference fields, and invariants without inventing foreign keys
+      - show exact document keys separately from stored fields and label native index metadata explicitly when needed
+      - name exact endpoint-qualified field or path mappings and cardinality and optionality at both ends of each edge
+      - distinguish EMBEDDED, PATH, REF, MIRROR, SNAPSHOT, and DERIVED using a consistent textual legend
+      - identify actual consistency owners and atomic versus eventual guarantees without treating application cardinality as database enforcement
+      - retain required historical identities with explicitly optional live targets and defined missing-target behavior
+      - preserve canonical deletion policy without inferring automatic cascade from containment
+      - retain native scoped index definitions and field badges inside owning entities without claiming relationships or referential integrity from indexes
+      - use connected readable groups and abbreviated nodes linked to full DATA owners
+      - keep execution order and synchronization in linked sequences rather than data-model edges
+      - use the worked document example as notation only without importing its schema or mechanisms
 
   - id: product-significant-index-notation
     prompt: Review an ERD where a partial index gives the same column both [P1·1]

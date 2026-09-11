@@ -4,7 +4,7 @@ Show actor actions, choices, navigation, and visible product outcomes. Use one
 focused flow per actor goal, including consequential failure and recovery
 paths. This view owns the user-visible path, not internal execution.
 
-Link system work to its `SEQ-*`, `SM-*`, or rule record. Do not draw service
+Link system work to its `SEQ-*`, `SM-*`, or rule diagram. Do not draw service
 calls, database reads, authorization checks, or query mechanics here.
 
 Visually group actions and states by consequential user-visible surface. Label
@@ -22,8 +22,9 @@ components, or states unless the product or design leader changes the target.
 Use labeled edges for navigation choices and visible permission, availability,
 or validation outcomes. Use a diamond only for a question visibly presented to
 the actor. When several conditions route to different surfaces, use one compact
-rectangular condition node. Keep runtime selection logic in a rule, decision
-table, or sequence.
+rectangular condition node. Keep runtime selection logic in a linked decision
+diagram or sequence, not prose or YAML rule lists. Render visible conditions,
+refusal, and recovery paths here rather than adding them only below the diagram.
 
 ```mermaid
 ---

@@ -43,7 +43,7 @@ flowchart TD
     RECONCILE -->|completion reconciled| COMPLETE
     RECONCILE -->|outcome still unconfirmed; retry available| UNKNOWN["Show outcome unconfirmed and Retry"]
     UNKNOWN -->|Retry| SUBMITTING
-    RECONCILE -->|read fails| READ_ERROR["Show reconciliation failure and Retry; Increment unavailable"]
+    RECONCILE -->|read fails| READ_ERROR["Show reconciliation failure and Retry; Increment and Dismiss unavailable"]
     READ_ERROR -->|Retry| RECONCILE
   end
 

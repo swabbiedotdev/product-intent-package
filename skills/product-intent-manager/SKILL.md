@@ -7,6 +7,23 @@ description: Create, reconstruct, simplify, or update an explicitly requested Pr
 
 ## Read this first: diagram responsibilities
 
+**Diagrams are the default home for product logic, not illustrations of prose.**
+Put rules, gates, eligibility, permissions, validation, calculations, precedence,
+state changes, retries, and failure/recovery behavior in the owning rendered
+diagram. Show conditions and their consequences as branches, guards, transitions,
+or concise attached notes; a generic “validate” box linked to a prose rule is
+not enough. Do not hide a behavioral requirement in prose, YAML `when`/`then`
+lists, Mermaid comments, or rationale beneath the diagram.
+
+Use prose for purpose, scope, terminology, causal rationale, and direct links.
+Structured schemas and parameter values may stay in their appropriate records;
+textual acceptance is limited to the exceptions below. The diagram names inputs and shows the logic
+that uses them. Prefer splitting a crowded diagram into linked focused diagrams
+over moving its logic into prose. Each fact still has one owner—do not maintain
+a second prose specification. Read the
+[diagram-first logic standard](references/product-intent-package-standard.md#diagram-first-product-logic)
+when authoring, updating, or simplifying behavioral intent.
+
 Keep these boundaries clear from the start:
 
 - **Sequence diagrams hold detailed process logic:** ordered calls and events,
@@ -23,6 +40,9 @@ Keep these boundaries clear from the start:
   and recovery, and outcomes. They intentionally omit internal system logic. A
   binding design target identifies the exact frame, node, branch, version, or
   local mockup; a link to an entire design file is context only.
+- **Decision diagrams hold shared rule logic:** exact conditions, priority,
+  calculations, and allowed/refused outcomes that need a reusable owner. Put a
+  process-local gate directly in its sequence instead of creating another file.
 
 Missing sequence-level detail in a state machine or user flow is correct. Link
 to the owning sequence instead of copying its internals into those views.
@@ -40,6 +60,12 @@ Before authoring an ERD, read [Diagram Presentation](references/diagram-presenta
 and its [worked notation example](references/erd-notation-example.md). That
 reference defines the supported-viewer fallback; do not assume HTML is unsupported.
 Simple relationship-only ERDs may stay plain when no custom detail is needed.
+For NoSQL/document stores, also read
+[Document-database relationships](references/document-data-models.md).
+Show logical relationships derived from document paths, reference fields, and
+product invariants even without foreign keys. Name exact path/field mappings,
+both-end cardinality, consistency owners, and lifecycle semantics; indexes are
+access paths, not evidence of relationships or referential integrity.
 For sequences, prefer numbered action arrows and adjacent, left-aligned notes
 for consequential execution details; read Diagram Presentation before authoring.
 
@@ -112,11 +138,25 @@ architecture/stack-context.md
 experience/user-flows.md
 ```
 
-Put simple observable acceptance directly on the capability in `product.yaml`.
-Add `acceptance.yaml` only when several scenarios, failure paths, cross-
-capability behavior, or detailed quality outcomes would make inline acceptance
-hard to read. Add any other artifact only when it answers a distinct product
-question. Read the
+**Keep `product.yaml` and `acceptance.yaml` minimal. Neither is a home for logic.**
+`product.yaml` contains product context: identity, release, outcome, boundary,
+actors, concise capabilities, exclusions, measures, optional DCL, and direct
+links. Do not accumulate rules, gates, conditions, algorithms, retry policies,
+or scenario lists in any field, including `outcome`, `boundary`, `acceptance`,
+and `success_measures`. Diagrammed outcomes already provide acceptance meaning;
+do not restate them as YAML checklists.
+
+Omit `acceptance.yaml` by default. Retain only unique acceptance cases that
+cannot be represented meaningfully in a diagram or its attached notes, with a
+brief reason why and a direct link to the relevant owner. The same exception
+applies to inline acceptance in `product.yaml`; keep an isolated exception
+inline, and use the separate file only when qualifying cases need their own
+small owner. Complexity, many branches, cross-capability scope, or convenience
+are not reasons to put logic in either file. Split or extend diagrams instead.
+Before adding a line, ask: “Is this necessary product context, or genuinely
+non-diagrammable acceptance?” If neither, put it in the owning diagram or omit
+it as duplication. Preserve existing meaning when moving it; never just delete
+a requirement because its current placement is wrong. Read the
 [Package Standard](references/product-intent-package-standard.md) before
 creating or migrating package structure and
 [Artifact Responsibilities](references/artifact-responsibilities.md) before
@@ -132,6 +172,25 @@ Use one owner for each fact and direct links where another artifact needs
 context. Assign a stable ID only when another file or external system refers to
 the item. Do not create artifact indexes, traceability graphs, coverage
 matrices, change logs, readiness ledgers, or placeholder files.
+
+## Modular PIPs and bounded review
+
+When intertwined logic makes a larger PIP difficult to review, organize one
+canonical package around capability modules with explicit public behavioral
+boundaries, internal diagrams, and owned state. Module folders are optional;
+small PIPs keep the three-file default. A module is not automatically a service,
+library package, or separate product. Do not create per-module product records,
+acceptance checklists, or dependency ledgers.
+
+Read [Capability modules](references/product-intent-package-standard.md#capability-modules)
+before defining or reorganizing these boundaries. Keep the public promise
+diagram-owned, internal logic separate, and cross-module workflows focused on
+composition. Preserve shared transactions and other real coupling explicitly.
+For updates and scoped audits, apply
+[Module-bounded review](references/change-and-handoff.md#module-bounded-review):
+review changed internals and consumed public contracts, then expand to consumers
+only where exported meaning or a cross-module invariant is affected. An
+unchanged signature or an incomplete contract is not evidence of isolation.
 
 ## Explain the current design, not its history
 
@@ -229,8 +288,9 @@ operability, cost bounds, or other stated constraints.
 
 For an audit, use tickets only to locate the requested scope, affected code,
 and implementation evidence. Reopen the canonical PIP release or revision and
-derive every product-alignment criterion from its owning records. Follow direct
-links and obvious semantic dependents needed to judge that scope; do not turn
+derive every product-alignment criterion from its owning records. Use the
+module-bounded review rule where boundaries exist; otherwise follow direct
+links and obvious semantic dependents needed to judge that scope. Do not turn
 ticket acceptance or completion status into the audit target.
 
 ## Data access and concurrency
@@ -238,18 +298,18 @@ ticket acceptance or completion status into the audit target.
 Record database mechanics only when they are product-significant:
 
 - An ERD may omit incidental implementation columns, but it must show each
-  persisted column that directly determines product behavior as its own row
-  with the exact physical name, type, and product-significant constraint. This
-  includes facts that affect selection, ranking, eligibility, authorization,
+  persisted column or document field that directly determines product behavior
+  as its own row with the exact physical name, type, and product-significant
+  constraint. This includes facts that affect selection, ranking, eligibility, authorization,
   lifecycle, recovery, compatibility, visible outcomes, or product-significant
   audit behavior. Do not hide them in a synthetic row such as
   `fitness_controls SMALLINT × 5`. A clearly labeled cross-diagram reference
   projection may stay abbreviated and link to the owning `DATA-*` entity.
 - In each consequential database step in a sequence, name the operation,
-  `DATA-*` ID, and exact physical table or view. Default to the owning ERD's
-  index badge when that index is the intended access path; otherwise list the
-  key lookup, join, filter, or mutation fields. When one logical step uses
-  several tables, name each table and its read, join, write, or constraint role.
+  `DATA-*` ID, and exact physical table, view, or collection/document path.
+  Default to the owning ERD's index badge when that index is the intended access
+  path; otherwise list the key lookup, join, filter, or mutation fields. When one
+  logical step uses several entities, name each and its read, join, write, or constraint role.
   Keep the database service as the lifeline, link rather than repeat the ERD's
   full index definition, and do not claim the database planner is guaranteed to
   choose an index unless that guarantee actually exists.
@@ -267,7 +327,9 @@ Record database mechanics only when they are product-significant:
   primary key as `PK` in the entity and omit its index badge unless the physical
   index has an independently product-significant purpose. Omit routine
   implementation indexes. Every index or coordination badge must sit on the
-  exact physical column it describes, never on a grouped or synthetic row.
+  exact physical column, document field, or explicitly labeled native index
+  metadata it describes, never on a grouped or synthetic row. Do not invent
+  stored ID fields, SQL constraints, or SQL index methods for document stores.
 - Before allowing several database clients or pools in one process, check
   whether a bounded shared pool can combine them without serializing genuinely
   independent transactions, causing head-of-line blocking, breaking session
@@ -330,17 +392,20 @@ behavior with a human product authority rather than inferring it from DCL.
 
 ## Workflow
 
-1. Read the canonical package, `governance.yaml` or the repository's current
+1. Read the canonical product context and scope-relevant owners, using module
+   boundaries where available, plus `governance.yaml` or the repository's current
    editing-authority guidance, and the relevant references below. Confirm that
    the requester has authority for the complete coherent change. For a new
    package, copy `assets/product-intent-template/`.
 2. Establish the release, outcome, boundary, actors, capabilities, exclusions,
    measures, and optional product-wide DCL.
-3. Put simple acceptance on each capability; add the optional acceptance file
-   only when scenario detail needs its own owner.
+3. Express observable outcomes in the owning diagrams. Keep `product.yaml`
+   minimal; add textual acceptance only for unique non-diagrammable cases under
+   the exception above, never as another version of diagrammed behavior.
 4. Draft the physical stack context and user-visible flows. Add state, data,
    sequence, rule, contract, journey, screen, quality, or deployment detail only
-   when it resolves a real ambiguity.
+   when it resolves a real ambiguity. Move behavioral logic from prose into its
+   owning diagram, including refusal and failure paths, without changing intent.
 5. Add concise current rationale to each owning diagram file. Link related
    records directly instead of copying their content.
 6. Use an isolated PIP fork for an unadopted alternative. Keep reconstruction

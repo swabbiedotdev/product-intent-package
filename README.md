@@ -20,7 +20,7 @@ The Product Intent skill contains:
 - `SKILL.md`, the concise entrypoint;
 - `references/`, guidance loaded only when relevant;
 - `assets/product-intent-template/`, the three-file default package;
-- `assets/acceptance-template.yaml`, optional detailed acceptance;
+- `assets/acceptance-template.yaml`, exceptional non-diagrammable acceptance;
 - `assets/governance-template.yaml`, optional current editing authority;
 - `assets/example-product-intent-package/`, a proportional worked example; and
 - `evals/cases.yaml`, realistic behavior cases.
@@ -57,9 +57,19 @@ architecture/stack-context.md
 experience/user-flows.md
 ```
 
-Simple acceptance belongs directly on capabilities in `product.yaml`. Add
-`acceptance.yaml` only when several scenarios, material failure paths, cross-
-capability behavior, or detailed quality outcomes are clearer separately.
+Keep `product.yaml` minimal: product context and direct links, not rules, gates,
+or scenario lists. Diagrams own behavior and observable outcomes. Omit
+`acceptance.yaml` unless a unique case cannot be meaningfully diagrammed;
+explain why, link its owner, and retain only that irreducible case. The same
+restriction applies to inline acceptance. Complexity or convenience is not an
+exception, and diagrammed behavior must not be copied into either file.
+
+Larger PIPs may group capability-owned logic into optional modules with public
+behavioral boundaries, internal diagrams, and thin cross-module workflows.
+The [module standard](skills/product-intent-manager/references/product-intent-package-standard.md#capability-modules)
+and [bounded review procedure](skills/product-intent-manager/references/change-and-handoff.md#module-bounded-review)
+define where a review can stop and when shared state or changed guarantees
+require wider review. Modules do not imply new services or separate PIPs.
 
 If a different product end state needs review, create an isolated PIP fork in a
 branch, worktree, or separate proposal location. Make the fork internally
@@ -101,6 +111,14 @@ Each diagram file includes concise current rationale for its non-obvious design
 choices. The rationale explains all active causes, constraints, and material
 tradeoffs for the present design; it does not retell product history.
 
+Diagrams are the default home for product logic, not illustrations of prose.
+Rules, gates, permissions, conditions, calculations, and recovery belong in
+rendered branches, guards, transitions, and attached notes. Shared rule logic
+uses a linked decision diagram; prose supplies context and rationale, not a
+second behavioral specification. See the
+[diagram-first standard](skills/product-intent-manager/references/product-intent-package-standard.md#diagram-first-product-logic)
+for structured inputs, acceptance, and the narrow decision-matrix exception.
+
 The five diagram responsibilities remain distinct:
 
 - stack context: physical systems, responsibility, state ownership, deployment,
@@ -124,6 +142,11 @@ See [diagram presentation](skills/product-intent-manager/references/diagram-pres
 and the [worked example](skills/product-intent-manager/assets/example-product-intent-package/product.yaml).
 Use simpler diagrams when extra detail adds no meaning; presentation does not
 make optional artifacts or runtime mechanisms mandatory.
+
+Document-store diagrams show logical relationships without requiring foreign
+keys. The [document-database guide and worked example](skills/product-intent-manager/references/document-data-models.md)
+separate paths, persisted fields, typed relationships, enforcement, retention,
+and entity-owned indexes; sequence diagrams retain synchronization and order.
 
 Structured records use YAML (`.yaml`). Mermaid sources use fenced `mermaid`
 blocks in Markdown (`.md`), including diagram-only files. Copied external

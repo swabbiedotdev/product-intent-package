@@ -13,7 +13,7 @@ This standard defines format `7.0.0`. Format 7 makes the PIP a pure current-
 intent package:
 
 - the default package has three files;
-- simple acceptance is inline and a separate acceptance file is conditional;
+- product context stays minimal; textual acceptance is exceptional;
 - package and item statuses, readiness fields, signatures, confirmation
   records, implementation observations, and handoff records are removed;
 - alternative intent lives in an isolated PIP fork rather than beside canonical
@@ -26,7 +26,7 @@ The default package is:
 
 | File | Responsibility |
 | --- | --- |
-| `product.yaml` | Product name, release, outcome, boundary, actors, capabilities, inline acceptance, exclusions, measures, and optional default DCL |
+| `product.yaml` | Minimal product context: name, release, outcome, boundary, actors, capabilities, exclusions, measures, optional DCL, and direct links; no behavioral logic |
 | `architecture/stack-context.md` | Physical clients, services, managed platforms, stores, external systems, responsibility, owned state, deployment placement, and connections |
 | `experience/user-flows.md` | Actor goals, actions, surface topology, visible states, choices, failure, recovery, and outcomes |
 
@@ -36,23 +36,184 @@ information needed to understand, build, or recognize the intended product.
 
 Use these conventional paths when an optional artifact is needed:
 
-| Optional artifact | Canonical path |
+| Optional artifact | Conventional path |
 | --- | --- |
-| Detailed or cross-capability acceptance | `acceptance.yaml` |
+| Unique acceptance cases that cannot be meaningfully diagrammed | `acceptance.yaml`, only under the exception below |
 | Editing authority | `governance.yaml` |
 | Intended journey | `experience/journeys/JOURNEY-*.md` |
 | Screen detail or local mockup | `experience/screens.yaml`, `experience/mockups/` |
 | Product-specific design patterns | `experience/design-system.md` or a link to the authoritative design system |
-| Rules, state machines, or decision tables | `behavior/rules.yaml`, `behavior/state-machines.md`, `behavior/decision-tables.md` |
+| Shared rule/decision diagrams or state machines | `behavior/rules.md`, `behavior/state-machines.md`; `behavior/decision-tables.md` only for the compact-matrix exception below |
 | Data model or product-significant schema | `data/data-model.md`, `data/schema.yaml` |
 | Shared, external, or product-significant contracts | `contracts/contracts.yaml` or `contracts/openapi.yaml` |
 | Runtime sequences | `sequences/sequences.md` |
 | Measurable quality constraints | `quality/constraints.yaml` |
 | Complex deployment topology | `architecture/deployment.md` |
 | Complex coordination topology | `architecture/coordination.md` |
+| Capability module boundary and internal owners | `modules/<capability>/boundary.md` and only the needed local artifacts |
+| Cross-module runtime composition | `workflows/<process>.md`, or an existing focused sequence |
 
 See [Artifact Responsibilities](artifact-responsibilities.md) for the trigger
 and ownership of each artifact.
+
+## Capability modules
+
+Use capability modules when intertwined logic prevents useful local review.
+Keep one canonical PIP and one minimal root `product.yaml`; small products keep
+the three-file default. The paths above are conventions, not a requirement to
+keep all sequences or data records in global type-based directories. Existing
+paths may remain when direct boundaries already provide isolation.
+
+A module groups a coherent responsibility whose internal logic can be reviewed
+against an explicit public promise. Choose boundaries around reusable behavior
+and state ownership, not simply actors, screens, file types, or deployment
+units. Reusable calculations can sit inside state-owning domains; workflows
+compose their operations. A module does not imply a separate deployed service,
+repository, package, database, or independently versioned product. A PIP
+reorganization alone does not authorize changing those implementation boundaries.
+
+### Public behavioral boundary
+
+Public means consumable by other PIP modules, not internet-accessible. The
+boundary must let a caller reason about an operation without reading its
+internal algorithm. For each operation, represent the applicable:
+
+- input meanings, provenance, caller obligations, authorization, and scope;
+- successful results, their meaning, and permitted durable or external effects;
+- refusal, partial failure, cancellation, and recovery outcomes, including
+  preserved state and responsibility for retries;
+- privacy and retention, freshness, compatibility, ordering, idempotency,
+  atomicity, and stated quality or resource guarantees on which callers rely.
+
+Do not invent guarantees or fill every category mechanically. Preserve current
+intent and resolve a consequential gap before asserting independence. Required
+side-effect differences, such as ephemeral processing versus persisted results,
+must be explicit operations or already-intended modes, not a hidden default.
+
+The public promise belongs in a focused diagram or boundary section of an
+existing owning diagram. Use sequence, decision, or state notation appropriate
+to the meaning; prose explains scope and rationale. Schemas may own exact shapes
+and parameters, but YAML and prose are not alternate behavioral specifications.
+Internal diagrams own how the promise is fulfilled and link to exported rules
+instead of defining them again. If an existing rule diagram already supplies a
+complete public operation, use it directly rather than creating a second copy.
+
+Each consuming call names and directly links the public operation, supplies
+inputs from named sources, and shows how its outcomes affect the caller. Keep
+the callee's internal predicates, formulas, storage mechanics, and recovery
+loops in the callee. A generic call is sufficient only when its linked boundary
+actually defines the result and effects the caller relies on.
+
+### Internal ownership and composition
+
+Group internal sequences, shared decisions, relevant state/data views, and
+module-local experience detail under the capability when useful. Add only the
+artifacts the module needs: a small stateless module may fit in one file. Do not
+add per-module `product.yaml`, acceptance files, versions, or review ledgers as
+modularity machinery. The root retains product context, physical architecture,
+and cross-module experience; it links local detail instead of duplicating it.
+
+Each entity has one full schema/ERD owner. Other views use linked reference
+projections. If several modules legitimately share a physical record, make
+field-level mutation ownership and the shared invariants explicit without
+copying the full entity or pretending the database is separated. An external
+reader relies on an exported read/projection contract; an external writer uses
+an owned mutation operation or the explicit shared integration boundary.
+
+Cross-module workflows own call order, orchestration decisions, and handling
+of public outcomes. They do not repeat the called algorithms. They retain
+detailed logic that genuinely belongs to the composition, especially shared
+transactions, lock order, revalidation, cancellation races, or compensation.
+Keep one owning integration sequence for each such invariant, naming the
+participating module operations, physical state, and commit/failure behavior.
+Do not split an atomic operation into independently committing calls merely to
+make modules appear independent. Constant reliance on each other's internals
+is a reason to revise the boundary or review the coupled owners together.
+
+Keep physical systems as sequence lifelines; label logical operation calls and
+link their boundaries. A small, explicitly logical module-interaction view may
+accompany architecture when it adds useful composition context, but it must not
+depict modules as deployed services or become an exhaustive dependency registry.
+Direct consumer-to-operation links are enough to derive incoming references
+during a review; do not maintain duplicate reverse edges.
+
+### Reorganizing an existing package
+
+Start with one or two reusable boundaries and their real consumers before a
+large file move. Separate public promises from internal logic, split broad
+records by ownership, and preserve behavior, stable IDs, and direct links.
+Keep a concise pointer at an old path when external references still need it;
+do not leave a second specification there. Migration plans and review results
+stay outside the canonical PIP.
+
+Exercise [module-bounded review](change-and-handoff.md#module-bounded-review)
+on a representative change: can the reviewer establish why consumers remain
+valid without opening unaffected internals? A necessary excursion identifies
+an incomplete contract or real coupling, not permission to ignore the detail.
+Folder structure and link checks alone do not prove semantic isolation.
+
+## Diagram-first product logic
+
+Strongly prefer diagrams as the canonical representation of behavioral logic.
+They are the specification of that logic, not an overview of a specification
+hidden in paragraphs. Rules, gates, permissions, eligibility, validation,
+priorities, calculations, transitions, timeouts, retries, fallbacks, and recovery
+belong in rendered nodes, labeled edges, guards, branches, and attached notes.
+Prose alone is not the default acceptable owner of these facts, even when it is
+in the same Markdown file as a diagram. Mermaid source comments do not count:
+the logic must survive rendering/export.
+
+Put process-local conditions in sequence `alt`/`else`, `opt`, `loop`, or `break`
+blocks. Show the condition, allowed action, refusal/failure result, and what is
+preserved or not written where consequential. A note may define a predicate or
+formula; it must attach to the relevant step, not replace branching with a wall
+of text. Use a focused decision flowchart for reusable rule selection or complex
+precedence, linked from consuming sequences. Keep lifecycle guards on state
+transitions, data invariants in ERD rows/edges or attached notes, and visible
+choices and outcomes in user flows. Do not move internal gates into user flows
+or ordered execution into ERDs just to make everything visual.
+
+Name exact inputs, operators, units, thresholds or parameter references, and
+outcomes. “Check eligibility,” “apply RULE-001,” and “retry if needed” are not
+complete logic unless they link to a diagram that owns that detail. Show
+evaluation precedence and otherwise/no-match outcomes when they affect behavior.
+Do not invent an unspecified branch outcome; resolve that product choice first.
+
+Keep one maintained owner. A shared `RULE-*` may be a heading/anchor containing
+a decision diagram or identify logic owned by a sequence; it need not be a YAML
+rule record. Consumers name the rule, link to its exact diagram, and use its
+result without copying its predicates. Existing rule IDs and externally used
+paths can retain concise pointers to their diagram owners. Do not add a rule
+registry just to inventory diagrams.
+
+Prose remains appropriate for product purpose, boundary, definitions, current
+causal rationale, and navigation. Structured records remain appropriate for
+schema and contract shapes, exact parameter/configuration values, measurable
+quality bounds, and editing authority. Textual acceptance is limited to the
+[Acceptance](#acceptance) exception. Structured records must not
+become alternate prose/YAML homes for branching behavior: the consuming diagram
+shows when and how those values or contract results change an outcome.
+
+A compact decision matrix is a narrow exception when a genuinely tabular rule
+is materially clearer there than in a branching graph. Prefer a rendered table
+node in the owning diagram; a standalone structured matrix is acceptable when
+that is the clearer exact representation. State its condition columns,
+precedence/match policy, and outcomes, and link the consuming diagram directly.
+Do not use this exception for paragraphs or `when`/`then` bullet lists. An
+accessible text equivalent may accompany a diagram but must introduce no new
+logic. An observed viewer limitation may use the documented fallback without
+discarding requirements; a missing local renderer is not such a limitation.
+
+For updates, inspect prose and YAML around the affected diagrams for hidden
+logic. Move each rule to its appropriate diagram owner, preserve its meaning
+and references, and remove duplicate normative prose after confirming it is
+represented. Split oversized diagrams by responsibility rather than shrinking
+text or exporting the hard parts to prose. This is a scoped authoring rule, not
+authorization to rewrite unrelated PIPs or a requirement for extra artifacts.
+
+Review question: with narrative prose hidden, can a reader follow the affected
+conditions to every material outcome using the diagrams and their explicitly
+linked structured inputs? If not, the logic representation is incomplete.
 
 ## Canonical current intent
 
@@ -137,7 +298,9 @@ or signoff record.
 
 ## Product record
 
-Keep `product.yaml` flat and readable:
+Keep `product.yaml` minimal, flat, and outward-facing. It supplies product
+context and direct links, not a growing inventory of rules or acceptance cases.
+Do not use any field as a loophole for logic that belongs in a diagram.
 
 ```yaml
 schema_version: 7.0.0
@@ -162,9 +325,6 @@ capabilities:
     name: Complete the primary job
     actor_ids: [ACTOR-001]
     outcome: The user can recognize that the job completed.
-    acceptance:
-      - The user can complete the core path and see the resulting state.
-      - A common recoverable failure offers a useful next action.
 
 exclusions:
   - A clear consequential exclusion.
@@ -188,19 +348,32 @@ purpose-specific links where a reader needs them.
 
 ## Acceptance
 
-Put concise observable acceptance directly on each capability by default. It
-should make success and material failure recognizable without dictating
-ordinary implementation.
+Observable outcomes in the owning diagrams provide acceptance meaning. Do not
+copy their branches, rules, gates, or failure/recovery behavior into
+`product.yaml` or `acceptance.yaml`, even as given/when/then examples. Neither
+file is a secondary behavioral specification or an exhaustive test catalogue.
 
-Add `acceptance.yaml` from `assets/acceptance-template.yaml` when acceptance
-needs several given/when/then scenarios, spans capabilities, describes material
-failure or recovery combinations, or owns detailed measurable quality outcomes.
-The separate file then owns those scenarios; do not repeat them inline. It may
-link through `verifies` to capabilities, rules, sequences, state transitions, or
-quality constraints.
+Omit `acceptance.yaml` unless a unique acceptance case cannot be represented
+meaningfully in a diagram or its attached notes. Keep only the irreducible case,
+a brief `why_not_diagram` explanation, and a direct `verifies` link to the
+relevant owner. The explanation must identify a real representation limitation,
+not merely say that prose is easier. An isolated qualifying case may stay inline
+on its capability; a separate file is warranted only when qualifying cases need
+their own small owner. Do not repeat the same case in both files.
 
-Acceptance is product content, not a readiness gate. It does not require a
-package status or a proof report.
+More scenarios, cross-capability scope, complex gates, or a crowded diagram do
+not qualify. Extend or split the owning diagrams. Exact quality values and
+contract shapes keep their existing structured owners; their presence does not
+justify another acceptance copy. Necessary non-diagrammable evaluation context
+may be textual, but its runtime conditions and behavior remain diagram-owned.
+
+Before adding text to either file, ask whether it is essential product context
+or a genuinely non-diagrammable acceptance case. Otherwise move it to its diagram
+owner or omit duplication. When simplifying existing packages, preserve each
+requirement in its owner before removing redundant YAML; preserve referenced
+IDs and links where needed. Do not create empty acceptance files or require one
+case per capability, branch, or diagram. Test plans, fixtures, execution results,
+and readiness reports belong outside the PIP.
 
 ## Current rationale
 
@@ -304,6 +477,13 @@ persisted coordination, subject to the explicit viewer fallback in
 diagrams and annotated sequences. Presentation does not change artifact
 responsibilities or require otherwise unnecessary detail.
 
+NoSQL/document-store data views retain logical relationships even without
+foreign-key constraints. Follow [Document-database relationships](document-data-models.md)
+for exact keys versus persisted fields, field/path mappings, both-end
+cardinality, typed relationships, consistency owners, and lifecycle semantics.
+Indexes stay attached to their owning entities as access definitions, separate
+from relationship and integrity claims.
+
 ## Engineering discretion and implementation anchors
 
 Engineering may choose frameworks, internal modules, algorithms, naming,
@@ -342,16 +522,17 @@ without harming necessary concurrency or session behavior. See
 [Artifact Responsibilities](artifact-responsibilities.md).
 
 An ERD is selective but exact about persisted product behavior. Show each
-persisted column individually with its physical name, type, and material
+persisted column or document field individually with its physical name, type, and material
 constraint when it affects selection, ranking, eligibility, authorization,
 lifecycle, recovery, compatibility, visible outcomes, or product-significant
 audit behavior. Omit incidental implementation columns, and clearly label an
 abbreviated entity repeated only as a cross-diagram reference projection. Never
 collapse product-significant columns into a synthetic grouped field. Every
-index or coordination badge requires the exact physical column and type.
+index or coordination badge requires the exact physical column, document field,
+or explicitly labeled native index metadata and type.
 
 For every consequential database step, a sequence names the operation,
-`DATA-*` ID, exact physical table or view, and the intended access path. Prefer
+`DATA-*` ID, exact physical table, view, or collection/document path, and the intended access path. Prefer
 the owning ERD's index badge when a canonical index applies; otherwise name the
 exact lookup, join, filter, or mutation fields. A multi-table logical step lists
 each table and its role. Tables remain annotations on the physical database

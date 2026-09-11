@@ -8,16 +8,34 @@ In every mode, write the resulting PIP as present-tense product facts or
 timeless requirements, not as an account of changes or a list of work. See
 [end-state wording](product-intent-package-standard.md#write-the-end-state-not-the-change).
 
+In every authoring mode, apply
+[diagram-first product logic](product-intent-package-standard.md#diagram-first-product-logic):
+inspect affected prose and YAML for hidden rules, gates, and recovery behavior;
+put them in the owning diagram before removing duplicate narrative. Keep exact
+inputs and outcomes, references, and current product meaning. Do not invent new
+behavior to fill a branch or migrate unrelated packages without authorization.
+Proportionality means fewer focused diagrams, not prose-only consequential logic.
+
+When intertwined logic needs modularization, apply
+[Capability modules](product-intent-package-standard.md#capability-modules).
+Pilot explicit public boundaries and real consumers before reorganizing the
+whole package. Keep one product record and use module-local artifact folders
+only where helpful; preserve shared-state and cross-module transaction owners.
+Do not change product behavior or implementation topology as a side effect of
+moving PIP records. During scoped updates or audits, use
+[Module-bounded review](change-and-handoff.md#module-bounded-review) rather than
+recursively reading every linked module. Full-package requests retain their
+requested scope.
+
 ## Create
 
 1. Copy the three-file template from `assets/product-intent-template/`.
 2. In `product.yaml`, set format `7.0.0`, product name, release, outcome,
    boundary, actors, capabilities, exclusions, measures, and optional product-
    wide DCL.
-3. Put simple observable acceptance on each capability. Copy
-   `assets/acceptance-template.yaml` only when multiple scenarios, material
-   failure paths, cross-capability behavior, or quality outcomes need a separate
-   owner.
+3. Put observable outcomes in their diagrams. Keep `product.yaml` minimal;
+   use `assets/acceptance-template.yaml` only for unique cases that cannot be
+   meaningfully diagrammed, explaining why. Do not copy diagrammed behavior.
 4. Draft the physical product boundary in `architecture/stack-context.md` and
    actor-visible paths in `experience/user-flows.md`.
 5. Add state, data, sequence, rule, contract, journey, screen, quality, or
@@ -84,8 +102,8 @@ For an incomplete canonical package:
 3. Follow direct links and inspect obvious semantic dependents; do not build an
    exhaustive graph.
 4. Add or repair only the facts and artifacts needed to close a real ambiguity.
-5. Move simple acceptance inline; retain a separate file only when it improves
-   clarity.
+5. Move diagrammable acceptance logic into its diagram owner; retain textual
+   acceptance only for qualifying non-diagrammable cases, not mere convenience.
 6. Add or refresh current rationale without preserving obsolete history.
 7. Remove empty, duplicative, implementation-only, status, readiness, review,
    and other ceremonial content after preserving current intent in its owner.
@@ -105,7 +123,8 @@ a recommendation, alternative, or unresolved choice, create an isolated PIP
 fork instead.
 
 1. Identify the owning fact, affected actors and capabilities, and release.
-2. Review direct links plus obvious semantic dependents.
+2. Use module-bounded review where public boundaries exist; otherwise review
+   direct links plus obvious semantic dependents.
 3. Update the owner, then affected flows, behavior, data, architecture,
    sequences, constraints, and acceptance.
 4. Refresh each affected diagram's current rationale so it contains all and
@@ -166,7 +185,7 @@ For a format-6 or similarly heavy package:
 1. Identify the current product facts and acceptance outcomes before removing
    machinery. Keep evidence, proposals, open questions, implementation findings,
    and history in working notes if they still matter operationally.
-2. Move release, outcome, boundary, actors, capabilities, simple acceptance,
+2. Move minimal release context, outcome, boundary, actors, capabilities,
    exclusions, measures, and optional default DCL into `product.yaml`.
 3. Remove package and item statuses, readiness labels, signatures, confirmation
    metadata, handoff records, implementation observations, proposal lanes,
@@ -177,8 +196,9 @@ For a format-6 or similarly heavy package:
    supersession histories, confirmation metadata, and ordinary change history.
    Omit governance only when current repository or project guidance already
    makes editing authority unambiguous.
-5. Move simple acceptance inline. Keep `acceptance.yaml` only when its scenarios
-   remain easier to understand separately.
+5. Preserve acceptance meaning in the diagrams before removing redundant YAML.
+   Keep either inline acceptance or `acceptance.yaml` only for unique cases
+   that cannot be meaningfully diagrammed; explain why and link their owners.
 6. Consolidate context/component/container views into stack context, screen maps
    into user flows, and conceptual/persisted relationships into one data-model
    view when those facts remain needed.

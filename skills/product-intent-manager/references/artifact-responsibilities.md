@@ -7,21 +7,23 @@ Every artifact must own distinct information. If two artifacts explain the same
 fact, keep it in the more appropriate owner and link to it.
 
 The three default files establish product scope, the physical system map, and
-actor flows. Put simple acceptance in `product.yaml`. Add these only when
+actor flows. Keep `product.yaml` to minimal context and direct links; diagram
+outcomes provide acceptance meaning. Add these only when
 triggered:
 
 | Optional artifact | Add when |
 | --- | --- |
-| Detailed acceptance | Several scenarios, failure paths, cross-capability behavior, or quality outcomes make inline acceptance hard to read |
+| Exceptional textual acceptance | A unique case cannot be meaningfully represented in a diagram or attached notes; explain why and link its owner |
 | Editing authority | Agents or contributors need a durable way to verify who may request canonical PIP edits and at what scope |
 | Journey map | Intended phases, recurrence, role changes, or handoffs add context a focused flow cannot show |
 | Screen records | Surface-specific content, actions, validation, responsive behavior, or visible states need detail beyond the flow or linked design |
 | Design records | Repeated visual, content, component, interaction, responsive, or accessibility rules constrain the product |
-| Rules or decision table | Several conditions, priorities, permissions, or calculations select an outcome |
+| Rule/decision diagram | Shared conditions, priorities, permissions, or calculations need an owner beyond a process-local sequence branch |
 | State machine | A product or domain object has meaningful lifecycle states and transitions |
 | Data model / ERD | Entity identity, ownership, relationships, or cardinality affect the product |
 | Schema detail | Fields, constraints, retention, or compatibility are product-significant |
 | API, event, or integration contract | A boundary is shared, external, compatibility-sensitive, or product-significant |
+| Module behavioral boundary | Consumers need to rely on a capability without reading its internal logic; use an existing diagram section when sufficient |
 | Sequence | Ordered cross-system work, async behavior, or recovery changes an outcome |
 | Quality constraints | A measurable performance, reliability, security, privacy, accessibility, compatibility, operations, or cost bound matters |
 | Separate deployment view | Environment, region, network, failover, or rollout topology makes stack context hard to read |
@@ -39,8 +41,11 @@ Do not create a file merely to record `not applicable`.
 | Data model / ERD | Which concepts or persisted entities exist, and how do they relate? | Navigation, message order, process transitions, and a full implementation schema |
 | Sequence | How does one consequential process execute across physical systems? | Screen topology, complete entity modeling, and the full object lifecycle |
 
-These five views are enough for ordinary application work. A decision table is
-a supporting logic format, not another diagram type. Deployment normally stays
+These five views cover ordinary application structure and execution. A focused
+decision flowchart can own shared rule logic; it is not another mandatory view.
+A compact decision matrix is the narrow exception described in the
+[diagram-first standard](product-intent-package-standard.md#diagram-first-product-logic).
+Deployment normally stays
 inside stack context. Do not add component, container, system-context,
 screen-map, domain-model, or similar diagrams that repeat these views.
 
@@ -50,28 +55,33 @@ which mechanism and what resource the mechanism protects. The ERD owns any
 persisted lease structure, and a sequence owns acquisition, renewal, timeout,
 retry, fencing, release, and recovery order.
 
-Keep diagrams with the same responsibility consolidated until readability
-requires focused files. If split, use one ID-named Markdown file per diagram and
-a simple linked table of contents. That table is navigation, not a registry or
-trace graph.
+Keep diagrams with the same responsibility consolidated until readability or
+coherent module ownership requires focused files. Use stable IDs when referenced
+and a simple linked table of contents when navigation needs it, not a registry
+or trace graph. Module-local folders may group different artifact types; see
+[Capability modules](product-intent-package-standard.md#capability-modules).
+Public boundary diagrams own exported promises, internal diagrams own their
+realization, and cross-module sequences own composition and shared invariants.
+This is an ownership arrangement, not another mandatory diagram type.
 
 ## One fact, one owner
 
 | Information | Owner |
 | --- | --- |
-| Release, outcome, boundary, actors, capabilities, simple acceptance, exclusions, measures, default DCL | `product.yaml` |
-| Detailed or cross-capability scenarios | Optional `acceptance.yaml` |
+| Minimal release context, outcome, boundary, actors, capabilities, exclusions, measures, default DCL, direct links | `product.yaml`; no logic inventory |
+| Observable success and failure | Owning diagrams; only unique non-diagrammable acceptance may remain inline or in optional `acceptance.yaml` |
 | Current reason for a diagrammed design | `Current rationale` in the owning diagram file |
 | Actor action, navigation, visible outcome, visible recovery, surface inventory | User flow |
 | Surface-specific content and actions | Screen or linked design record, when needed |
-| Condition combinations that select an outcome | Rule or decision table |
+| Condition combinations that select an outcome | Owning sequence branch or linked rule/decision diagram |
 | Valid states and process-triggered transitions | State machine |
 | Ordered calls, events, input provenance, database table use and intended access paths, retries, fallbacks, and runtime failure | Sequence |
 | Physical responsibility, owned state, provider, deployment placement, trust boundary | Stack context |
 | Cross-process contenders, coordination scope, mechanism, and protected resource | Stack-context coordination overlay |
 | Entity identity, relationship, and cardinality | Data model / ERD |
 | Request, response, event, and error shape | Contract |
-| Product-significant field or storage constraint | Schema detail |
+| Module operation's exported behavior, effects, and caller obligations | Public boundary diagram or linked existing rule owner; not a duplicate contract prose list |
+| Product-significant field or storage constraint | ERD row/edge or attached note; exact schema shape may remain structured |
 | Narrow DCL exception | `dcl_override` on the owning YAML record or a DCL line in the owning Markdown file |
 | Current canonical editing authority and scope | Optional `governance.yaml` |
 
@@ -121,8 +131,8 @@ query mechanics, cursors, retries, idempotency, or invisible state.
 Prefer labeled edges for navigation choices and visible permission,
 availability, or validation outcomes. Use a diamond only for a question visibly
 presented to the actor. When internal conditions route to different surfaces,
-use one compact product-condition node and put the selection logic in a rule,
-decision table, or sequence.
+use one compact product-condition node and link the selection logic to a
+decision diagram or sequence.
 
 Keep one actor goal or closely related outcome in one flow. Use a short overview
 and linked subflows when crossing lines obscure the actor path. Keep screen
@@ -160,6 +170,13 @@ its trigger, physical `ARCH-*` participants, ordered synchronous or asynchronous
 messages, input provenance, authority and data boundaries, durable change, and
 material decision, timeout, retry, fallback, duplication, partial failure,
 compensation, or recovery behavior.
+
+Render that logic inside the diagram, not in supporting paragraphs. Branches
+show consequential conditions and outcomes; attached notes show precise guards,
+formulas, input sources, and preserved state. A linked rule must resolve to its
+owning decision diagram (or the standard's narrow structured-matrix exception),
+not a prose-only rule list. Split a large process into linked sequences before
+moving conditions, retry bounds, or failure handling out of the visual.
 
 Recommend a DCL line above each implementable sequence:
 
@@ -210,9 +227,9 @@ transition it causes but must not restate the lifecycle model.
 ### Database access in sequences
 
 For each consequential database interaction, show the logical operation,
-`DATA-*` ID, exact physical table or view, and how the step locates or constrains
-the relevant rows. Default to the ERD's index badge when a canonical index is
-the intended access path because that badge already identifies its keys,
+`DATA-*` ID, exact physical table, view, or collection/document path, and how the
+step locates or constrains the relevant records. Default to the ERD's index badge
+when a canonical index is the intended access path because that badge already identifies its keys,
 predicate, expressions, and included columns. If no canonical index applies,
 show the exact key lookup, join, filter, or mutation fields instead.
 
@@ -262,11 +279,14 @@ sequenceDiagram
   Note right of DB: READ · DATA-003 pitch<br/>KEY · id <- route parameter
 ```
 
-When one logical database call reads, joins, or writes several product tables,
+In the owning internal or integration sequence, when one logical database call reads, joins, or writes several product tables,
 list each table and its distinct role in one adjacent note. Do the same for the
 product-significant tables behind an encapsulating function or view; omit
 incidental database catalogs and engine internals. Keep the physical database
-as the lifeline rather than turning tables into participants.
+as the lifeline rather than turning tables into participants. A consumer calling
+a module operation links its public boundary rather than repeating these
+internal access annotations. Shared cross-module transactions retain their
+consequential access and commit detail in the owning integration sequence.
 
 The sequence references an index badge and short name; the ERD remains the sole
 owner of the complete index definition. A query planner may choose a different
@@ -337,10 +357,18 @@ constraints. Keep conceptual and persisted meanings distinct when both are
 needed, even if one diagram shows their mapping. Do not use the ERD for
 navigation, process order, transition validity, or a full database definition.
 
+For NoSQL/document stores, use
+[Document-database relationships](document-data-models.md) and its worked example.
+Logical relationships come from exact paths, reference fields, and product
+invariants, not the presence of foreign keys or indexes. Distinguish embedded
+values, containment, references, mirrors, snapshots, and aggregates; name
+both-end cardinality, enforcement ownership, and deletion/retention semantics.
+An application-enforced invariant is not a database constraint.
+
 Not being a full schema does not permit hiding persisted product behavior. In
-the owning entity, show every persisted column individually by its exact
-physical name and type when its value affects selection, ranking, eligibility,
-authorization, lifecycle, recovery, compatibility, a visible outcome, or audit
+the owning entity, show every persisted column or document field individually
+by its exact physical name and type when its value affects selection, ranking,
+eligibility, authorization, lifecycle, recovery, compatibility, a visible outcome, or audit
 behavior that itself matters to the product. Show its product-significant null,
 key, uniqueness, range, enumeration, retention, or other constraint when
 applicable. Do not replace several such fields with an invented summary row
@@ -375,7 +403,8 @@ convention:
    may also appear in the predicate, but it keeps its numeric or `·expr` badge;
    do not add a redundant same-index `·where` badge. Show every badge when one
    column participates in several indexes. Every badged attribute must be the
-   exact physical column with its exact type; never attach an index badge to a
+   exact physical column, document field, or labeled native index metadata with
+   its exact type; never attach an index badge to a
    grouped, synthetic, or abbreviated projection row.
 4. Repeat each base badge once in an `INDEXES` compartment immediately below
    the entity. Write that index's complete current definition; do not use
@@ -390,6 +419,12 @@ predicate or expression, included columns, owning query or process, and product
 purpose through a direct `SEQ-*`, `RULE-*`, or `QC-*` link. A candidate index
 belongs in an isolated PIP fork, not beside the canonical index with a proposal
 status.
+
+Use backend-native definitions: include collection or collection-group scope
+and index modes when applicable, not invented SQL methods or uniqueness.
+Document path identity is not a secondary index. Indexes do not establish
+relationships or guarantee referential integrity; an actual unique index
+enforces only its specified uniqueness, not target existence.
 
 Document each product-significant storage uniqueness constraint this way,
 including compound and conditional uniqueness. A `UK` field label or a prose
@@ -475,8 +510,8 @@ textual badges such as `[LEASE1·scope]`, `[LEASE1·owner]`,
 `[LEASE1·state]`. Repeat the base badge in a `COORDINATION` compartment below
 the entity:
 
-Every coordination badge must identify the exact persisted physical column and
-type. Do not place a lease or lock role on a grouped field or a cross-diagram
+Every coordination badge must identify the exact persisted column or document
+field and type. Do not place a lease or lock role on a grouped field or a cross-diagram
 reference projection.
 
 Map all persisted roles used by the mechanism: scope, owner or attempt, expiry
@@ -556,10 +591,16 @@ replaces the requirement to justify an exceptional lock or lease.
 
 ## Decision tables
 
-Use a decision table when several facts select an outcome. Let it own condition
-precedence and the resulting surface, state, action, or refusal. Flows show the
-actor-visible result, sequences return required facts, and acceptance tests
-representative combinations. Do not copy the matrix into those artifacts.
+Default to a decision flowchart when several facts select an outcome. Show exact
+inputs, precedence, predicates, calculations, and resulting surface, state,
+action, or refusal. Keep process-local gates in their sequence. Decision
+diamonds here represent internal predicates; the user-flow restriction on
+diamonds applies only to user-flow diagrams.
+
+Use a compact decision table only under the
+[diagram-first standard's matrix exception](product-intent-package-standard.md#diagram-first-product-logic).
+Flows show actor-visible results, sequences use the rule's result, and acceptance
+checks representative outcomes. Link the owner rather than copying its logic.
 
 ## Optional journey maps and design boards
 

@@ -11,8 +11,9 @@ For a material product-intent change:
 1. Identify the owning fact and release, then verify the requester's identity
    and current editing authority from `governance.yaml` or unambiguous project
    guidance.
-2. Follow direct links and review obvious semantic dependents before deciding
-   whether the complete change fits that authority.
+2. Use module-bounded review below where boundaries exist; otherwise follow
+   direct links and obvious semantic dependents. Determine whether every
+   required edit in the complete change fits that authority.
 3. If the new end state is not already an unambiguous authorized decision, or
    any required dependent edit falls outside a scoped editor's access, create
    one complete isolated PIP fork rather than editing the canonical package.
@@ -33,6 +34,49 @@ Preserve a stable cross-file ID when meaning is unchanged. Do not maintain a
 global dependency graph, per-artifact version counter, package hash, change log,
 or product history inside the PIP.
 
+## Module-bounded review
+
+Use this procedure for changes and scoped audits in a modular PIP. It narrows
+the reasoning scope, not the obligation to preserve a coherent product. A user
+request for a full-package audit still requires that scope.
+
+1. Read root product context and applicable product-wide constraints, the
+   changed or audited module's public boundary and affected internals, and the
+   public contracts of its direct dependencies that the work consumes. Do not
+   recursively open dependency internals by default.
+2. Check that internal logic fulfills the public promise and local invariants.
+   Compare old and new meaning, not merely file paths or signatures. Exported
+   meaning includes result semantics, errors, authorization, side effects,
+   privacy/retention, freshness, compatibility, atomicity, recovery, and stated
+   quality/cost bounds.
+3. Search direct operation links and obvious semantic consumers for assumptions
+   the boundary omits, including shared reads/writes and integration invariants.
+   This is impact discovery, not a review of every consumer's internals. Missing
+   links or unchanged contract text do not prove that no consumers are affected.
+4. If exported guarantees and applicable cross-module invariants remain valid,
+   stop at the boundary. If meaning changes, inspect the directly affected
+   consumer call sites and outcome handling; propagate farther only where their
+   own guarantees or shared invariants are affected. Additive changes still
+   require checking assumptions such as exhaustive outcome handling.
+5. Review the owning integration sequence and affected state owners whenever
+   shared transactions, mutation ownership, locks, cancellation, or other
+   cross-module invariants change. Product-wide policy changes may genuinely
+   require broad review. If a contract is incomplete or a hidden dependency
+   appears, inspect the necessary owners and report the boundary gap; do not
+   invent a guarantee to stop early.
+
+For example, changing ranking weights need not reopen an unchanged raw-scoring
+algorithm, but does require reviewing affected selection outcomes. Changing
+score meaning or evidence compatibility reaches consumers relying on those
+semantics. Changing atomic publication and debit behavior reaches both state
+owners and their shared transaction, even if every function signature stays
+the same.
+
+Report the review scope, reasons for stopping or expanding it, and verification
+limits in the task response or existing working notes, not a new PIP artifact.
+YAML, links, and rendering checks establish structural validity, not behavioral
+compatibility. Test plans and execution results remain outside the PIP.
+
 ## Implementation alignment
 
 At the start of PIP-governed implementation or audit, note the canonical PIP Git
@@ -44,8 +88,9 @@ scope covers the change.
 For an audit, a ticket may guide which implementation area, code, and PIP
 records to inspect. It is not the conformance target. Derive expected behavior,
 acceptance, constraints, diagrams, data rules, and design targets from the
-canonical PIP owners. Follow direct links and obvious semantic dependents needed
-to assess the requested scope. A completed ticket, checked box, passing test, or
+canonical PIP owners. Apply module-bounded review where boundaries exist;
+otherwise follow direct links and obvious semantic dependents needed to assess
+the requested scope. A completed ticket, checked box, passing test, or
 faithful-looking paraphrase does not establish PIP alignment.
 
 Implementation findings stay in the task, audit, or code review. Do not add an
@@ -173,6 +218,15 @@ canonical PIP unchanged and use an isolated PIP fork for a concrete alternative.
 
 ### 2. Enough product and process meaning
 
+Hide the narrative prose and inspect the rendered diagrams plus their directly
+linked structured inputs. Can a reader trace each affected rule, gate, priority,
+calculation, timeout, and failure/recovery path to its material outcome? Flag
+logic found only in prose, YAML `when`/`then` lists, Mermaid comments, or rationale.
+Check that attached notes are concise and branch-specific, shared rules resolve
+to diagram owners, and no removed prose condition disappeared during migration.
+An accessibility equivalent or explicit compact-matrix exception must not add
+unrepresented or competing logic. Preserve intent when correcting placement.
+
 Confirm that the package explains applicable:
 
 - actor-visible surfaces, states, paths, failure, and recovery;
@@ -194,7 +248,7 @@ For an existing-product or design-led implementation, also check that:
 - sequences name intended code owners and their runtime responsibilities,
   preserving suitable existing owners without construction-task labels;
 - consequential inputs state their source;
-- consequential database steps name each physical table or view and operation,
+- consequential database steps name each physical table, view, or collection/document path and operation,
   reference the canonical index badge when applicable, or show exact key fields
   when no canonical index applies;
 - user-flow surface boundaries identify what needs mockups;
@@ -204,13 +258,19 @@ For an existing-product or design-led implementation, also check that:
 
 For product-significant database design, check that:
 
+- document-store relationships remain visible without foreign keys; exact
+  document keys/path components are distinct from stored fields, and edges name
+  matching endpoints, both-end cardinality, and the relationship kind;
+- consistency owners and lifecycle rules distinguish database enforcement from
+  application invariants, permit intentionally missing targets explicitly, and
+  never imply cascading deletion from containment alone;
 - custom table nodes contain the owning entity's attribute badges and attached
   index/coordination compartments, unless a project-requested format or observed
   viewer limitation requires the documented fallback;
 - badges use brackets and explicit key/coordination role suffixes, match their
   compartment entries, and account for compound and conditional uniqueness as
   well as single-column constraints;
-- persisted columns that determine product behavior appear individually with
+- persisted columns or document fields that determine product behavior appear individually with
   exact physical names, types, and material constraints rather than synthetic
   grouped rows, while abbreviated cross-diagram references are clearly marked;
 - each physical index has exactly one badge and one complete `INDEXES`
@@ -227,7 +287,8 @@ For product-significant database design, check that:
 - persisted lease fields use matching ERD coordination badges and a
   `COORDINATION` compartment, while runtime acquisition, renewal, expiry,
   fencing, release, and recovery stay in the owning sequence;
-- every index or coordination badge sits on the exact physical column and type,
+- every index or coordination badge sits on the exact physical column, document
+  field, or explicitly labeled native index metadata and type,
   never a grouped field or abbreviated reference projection;
 - sequence access annotations agree with the linked ERD table names, index
   badges, and key fields without duplicating full index definitions or promising
@@ -251,10 +312,14 @@ without inventing controls the actual response does not need.
 
 ### 3. Observable acceptance and engineering discretion
 
-Confirm that every in-scope capability has observable acceptance. Inline
-acceptance is preferred; a separate `acceptance.yaml` is warranted only when
-scenario detail improves clarity. Acceptance should recognize success and
-material failure without dictating ordinary construction.
+Confirm that every in-scope capability has recognizable success and material
+failure in its owning diagrams. Inspect `product.yaml` and `acceptance.yaml`
+specifically for regression: keep only necessary product context, direct links,
+or unique non-diagrammable acceptance cases with a concrete reason. Do not accept
+logic hidden under `outcome`, `boundary`, `success_measures`, or given/when/then.
+More detail, complexity, or convenience does not justify textual acceptance.
+An absent acceptance file is normal; do not require a YAML checklist when the
+diagram already expresses the outcome. Preserve all meaning when moving text.
 
 An exact current mockup target must cover its required visible states and
 interactions. Do not duplicate every visual detail into YAML.

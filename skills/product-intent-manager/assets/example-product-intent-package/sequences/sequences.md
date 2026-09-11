@@ -2,7 +2,8 @@
 
 ## SEQ-001 Increment once
 
-This sequence applies [RULE-001](../behavior/rules.yaml) to
+This diagram owns the increment and replay logic of
+[RULE-001](../behavior/rules.yaml) for
 [DATA-001 and DATA-002](../data/data-model.md) during
 [FLOW-001](../experience/user-flows.md#flow-001-read-and-increment-the-counter).
 
@@ -121,7 +122,7 @@ sequenceDiagram
     Note over U,B: trigger <- user action on SCREEN-001
     B->>S: API-002 Current progress
     S->>D: Read current value, target, and state
-    Note right of D: READ · DATA-001 counter<br/>KEY · id <- COUNTER_ID product constant
+    Note right of D: READ · DATA-001 counter<br/>KEY · id <- COUNTER_ID product constant<br/>NO WRITE · value, target, state, and receipts remain unchanged
   else Unknown increment outcome or retry of its failed reconciliation read
     Note over B: request_key <- retained input from SEQ-001
     B->>S: API-002 Reconcile(request_key)
@@ -141,7 +142,7 @@ sequenceDiagram
     D-->>S: Read failure
     S-->>B: Read failed, increment outcome is not determined
     B-->>U: Show Retry and keep Increment unavailable
-    Note over B: PRESERVE · retain request_key when reconciling<br/>Retry repeats the failed read, not the increment
+    Note over B: PRESERVE · retain request_key when reconciling<br/>Retry repeats the failed read, not the increment<br/>GUARD · no Dismiss while the outcome is unresolved<br/>Do not claim the increment failed or left progress unchanged
   end
 ```
 

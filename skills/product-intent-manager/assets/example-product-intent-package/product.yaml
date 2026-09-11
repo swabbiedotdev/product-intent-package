@@ -17,12 +17,12 @@ capabilities:
     name: Read and advance shared progress
     actor_ids:
       - ACTOR-001
-    outcome: The persisted value and target are visible, each accepted request advances progress once, and reaching the target completes the counter.
-    acceptance_ref: acceptance.yaml
+    outcome: The user can view and advance shared progress toward completion.
+    behavior_refs:
+      - experience/user-flows.md#flow-001-read-and-increment-the-counter
+      - sequences/sequences.md#seq-001-increment-once
+      - sequences/sequences.md#seq-002-load-or-reconcile-progress
+    quality_ref: quality/constraints.yaml
 exclusions:
   - Authentication, accounts, and multi-tenancy
   - Changing or resetting the target
-success_measures:
-  - Every accepted request changes the persisted value exactly once and has one durable receipt.
-  - Loading shows current persisted progress; increment completion and receipt-based reconciliation show the recorded outcome of that request.
-  - The counter becomes complete at the target and cannot advance beyond it.

@@ -46,13 +46,16 @@ not an optional embellishment after a plain `erDiagram`. Follow the fallback
 below only for a project-requested format or an observed viewer limitation.
 Read the [worked notation example](erd-notation-example.md) before authoring;
 adapt its table structure and CSS, not its illustrative schema or mechanisms.
+For document stores, also read [Document-database relationships](document-data-models.md)
+for the path headings, typed relationship legend, and worked connected groups.
 
 - A prominent entity heading and four columns: `ATTRIBUTE`, `TYPE`,
   `KEY / RULE`, and `INDEX BADGE` (or `INDEX / COORDINATION` when both apply).
-  Put the `DATA-*` owner and exact physical table name in the entity heading,
+  Put the `DATA-*` owner and exact physical table name or document key/path in the entity heading,
   not just a field comment. Qualify references by table when one DATA owner
   covers several physical entities.
-- One row per product-significant physical column. Use monospace for field
+- One row per product-significant physical column or document field. Separate
+  path components and native index metadata from persisted attributes. Use monospace for field
   names, types, and index names; keep explanatory rules readable and wrapped.
 - An `INDEXES` compartment within the same entity, below its attributes. Each
   entry has one base badge, its complete definition, and its process or product
@@ -64,6 +67,9 @@ adapt its table structure and CSS, not its illustrative schema or mechanisms.
   A flowchart line alone does not express ERD cardinality. Use compact dashed
   `REFERENCE · DATA-* · entity` nodes for entities owned elsewhere and link to
   their owners rather than duplicating their fields.
+  When field-level attachment is unavailable, label edges with exact,
+  endpoint-qualified field/path mappings and cardinality/optionality at both
+  ends. Arrowheads never imply execution order or enforcement by the database.
 
 Use restrained borders, contrasting section headers, left-aligned cells, and
 adequate spacing. Apply the recommended dark palette consistently. Keep
@@ -150,7 +156,7 @@ Choose only relevant note labels:
 | Label | Detail |
 | --- | --- |
 | `OWNER` / `CALL` | Intended function, routine, or operation and responsibility |
-| `READ`, `INSERT`, `UPDATE`, `DELETE`, `JOIN` | DATA owner, exact table/view, and operation |
+| `READ`, `INSERT`, `UPDATE`, `DELETE`, `JOIN` | DATA owner, exact table/view or collection/document path, and operation |
 | `ACCESS` / `CONSTRAINT` | Table-qualified ERD badge and index name or enforcing constraint |
 | `KEY` / `INPUT` | Consequential fields and where their values originate |
 | `WRITE` / `RETURN` | Changed fields or returned facts that determine subsequent behavior |
@@ -188,11 +194,60 @@ sequenceDiagram
 
 Use `Note over` for a boundary spanning participants, such as external work
 occurring outside a database transaction. Use short line breaks to keep notes
-scannable. Move lengthy explanations into nearby supporting notes with direct
-references; retain branch-specific facts beside their branch. Link code owners
-and current rationale below the diagram when useful.
+scannable. Put behavioral detail in rendered branches and attached notes; split
+into linked diagrams when needed. Only non-normative explanation and causal
+rationale move below the diagram. Keep code ownership visible at its step and
+use nearby links for exact code destinations.
 
 Arrows and notes together describe current intended runtime behavior. Preserve
 the PIP's end-state wording: no reuse/modify tasks or implementation progress.
 Do not copy complete index definitions into sequences or fill every step with
 every label. Detailed notes earn their place by resolving a real ambiguity.
+
+## Rules and gates as visible decisions
+
+Use process-local sequence branches for gates that belong to one operation.
+For shared selection logic, use a focused Mermaid decision flowchart with exact
+predicates, precedence, and outcomes. A box saying “apply rules” is a link to
+another diagram, not a substitute for one. A paragraph pasted into a giant note
+is not a decision diagram: put consequential alternatives on distinct paths.
+Calculations and invariants that do not branch can use concise attached notes
+or entity rows. Keep failure/refusal consequences visible beside their condition.
+
+### Worked rule: publication decision
+
+This synthetic rule demonstrates notation, not required product behavior.
+`RULE-201` owns selection only; its consuming sequence owns fetching inputs,
+authorization enforcement, transaction boundaries, and publication. The diagram
+includes input provenance, priority, the exact limit comparison, and each result.
+
+```mermaid
+---
+config:
+  theme: dark
+  flowchart:
+    wrappingWidth: 280
+---
+flowchart TD
+  INPUT["RULE-201 · Publication decision<br/>editor: current membership.role = editor<br/>state: persisted document.state<br/>used: current period's published count<br/>limit: PUBLISH_LIMIT setting, same period"]
+  AUTH{"editor = true?"}
+  STATE{"state = draft?"}
+  CAPACITY{"used &lt; limit?"}
+  DENIED["DENY · no publication or count change"]
+  INVALID["REFUSE_STATE · no publication or count change"]
+  FULL["LIMIT_REACHED · no publication or count change"]
+  ALLOW["ALLOW · consuming sequence may publish"]
+  INPUT --> AUTH
+  AUTH -->|No| DENIED
+  AUTH -->|Yes| STATE
+  STATE -->|No| INVALID
+  STATE -->|Yes| CAPACITY
+  CAPACITY -->|No, including equality| FULL
+  CAPACITY -->|Yes| ALLOW
+```
+
+The ordering makes refusal precedence inspectable. Consuming sequences link to
+this diagram and branch on its returned result without repeating the predicates.
+An input lookup failure belongs to the consuming sequence's failure path; it
+must not silently become `ALLOW`. For a real product, use its actual rule and
+sequence owners rather than importing this example's roles or quota.
