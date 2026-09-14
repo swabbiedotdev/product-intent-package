@@ -113,10 +113,10 @@ Use nearby Markdown links when the viewer cannot preserve links inside HTML
 labels; this does not require duplicating the definition. A diagram export
 should retain the fields, badges, definitions, and role mappings together.
 
-The [Counter data model](../assets/example-product-intent-package/data/data-model.md)
+The [Counter data model](../assets/example-product-intent-package/modules/counter/data/data-model.md)
 demonstrates the complete dark table style, per-attribute badges, an attached
 index compartment, and explicit cardinality. Its
-[sequences](../assets/example-product-intent-package/sequences/sequences.md)
+[sequences](../assets/example-product-intent-package/modules/counter/sequences/sequences.md)
 reference that same index without copying its definition. No lease or lock
 compartment is needed because the example has no such persisted mechanism.
 

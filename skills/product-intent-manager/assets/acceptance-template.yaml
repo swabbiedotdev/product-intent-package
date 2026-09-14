@@ -1,5 +1,6 @@
 # Omit this file unless a unique acceptance case cannot be meaningfully
 # represented in a diagram or attached note. Keep only irreducible detail.
+# If needed, place it inside its owning module, never at the PIP root.
 # Complexity, many branches, and convenience are not reasons to use this file.
 # Do not copy diagrammed logic, create an exhaustive test plan, or ship it empty.
 scenarios: []

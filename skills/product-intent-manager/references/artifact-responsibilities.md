@@ -6,8 +6,11 @@ Use the smallest set of artifacts that answers the product questions at hand.
 Every artifact must own distinct information. If two artifacts explain the same
 fact, keep it in the more appropriate owner and link to it.
 
-The three default files establish product scope, the physical system map, and
-actor flows. Keep `product.yaml` to minimal context and direct links; diagram
+The starter establishes product scope, the physical system map, and
+actor flows inside the initial capability module. All normative artifacts,
+including shared policies and cross-module orchestration, have module owners.
+Root overviews provide context and links, not a parallel specification. Keep
+`product.yaml` to minimal context and direct links; diagram
 outcomes provide acceptance meaning. Add these only when
 triggered:
 
@@ -18,7 +21,7 @@ triggered:
 | Journey map | Intended phases, recurrence, role changes, or handoffs add context a focused flow cannot show |
 | Screen records | Surface-specific content, actions, validation, responsive behavior, or visible states need detail beyond the flow or linked design |
 | Design records | Repeated visual, content, component, interaction, responsive, or accessibility rules constrain the product |
-| Rule/decision diagram | Shared conditions, priorities, permissions, or calculations need an owner beyond a process-local sequence branch |
+| Rule/decision diagram | Conditions, priorities, permissions, or calculations are explicitly consumed by documented processes and need a shared owner beyond a process-local branch |
 | State machine | A product or domain object has meaningful lifecycle states and transitions |
 | Data model / ERD | Entity identity, ownership, relationships, or cardinality affect the product |
 | Schema detail | Fields, constraints, retention, or compatibility are product-significant |
@@ -50,19 +53,22 @@ inside stack context. Do not add component, container, system-context,
 screen-map, domain-model, or similar diagrams that repeat these views.
 
 Coordination is an optional overlay on stack context, not a sixth default
-diagram responsibility. It shows which physical processes contend through
-which mechanism and what resource the mechanism protects. The ERD owns any
+diagram responsibility. At the root it maps physical contenders and protected
+resources to module-owned mechanisms, without defining their rules. The ERD owns any
 persisted lease structure, and a sequence owns acquisition, renewal, timeout,
 retry, fencing, release, and recovery order.
 
 Keep diagrams with the same responsibility consolidated until readability or
 coherent module ownership requires focused files. Use stable IDs when referenced
 and a simple linked table of contents when navigation needs it, not a registry
-or trace graph. Module-local folders may group different artifact types; see
+or trace graph. Module-local folders group different artifact types by responsibility; see
 [Capability modules](product-intent-package-standard.md#capability-modules).
 Public boundary diagrams own exported promises, internal diagrams own their
 realization, and cross-module sequences own composition and shared invariants.
-This is an ownership arrangement, not another mandatory diagram type.
+This is required ownership, not another mandatory diagram type. Public
+boundaries may share a file with their owning diagrams; no boilerplate bundle
+is required. A workflow crossing modules remains inside its domain or
+orchestration module.
 
 ## One fact, one owner
 
@@ -116,6 +122,13 @@ process choices.
 
 Share an ID and short label. Do not copy the selecting rule, transition
 definition, or runtime messages into every view.
+
+Links preserve context but do not alone prove that logic is used. Every rule
+must occur in a documented process or be explicitly invoked by one. Show its
+application point, input sources, and the effect of its result in the consuming
+diagram. Trace nested calls to an actual process trigger; a cycle of otherwise
+unused helpers is not integration. See
+[Process-connected logic](product-intent-package-standard.md#process-connected-logic-no-orphan-rules).
 
 ## User flows
 
@@ -351,7 +364,9 @@ table-node presentation in
 the viewer supports it. The attribute badges and attached compartments are one
 entity visual, not an ordinary ERD followed by a diagram-wide prose appendix.
 
-Use one data-model view for conceptual relationships and persisted entities.
+Within each module, combine conceptual relationships and persisted entities
+when one data-model view is sufficient. Do not consolidate unrelated modules'
+full entity definitions into a root data model.
 Show identity, ownership, relationships, cardinality, and product-significant
 constraints. Keep conceptual and persisted meanings distinct when both are
 needed, even if one diagram shows their mapping. Do not use the ERD for
@@ -549,6 +564,38 @@ platforms, stores, queues, and labeled connections. State each node's
 responsibility and owned state. Name a provider or runtime only when it is part
 of current intent.
 
+### Module-first overview documents
+
+Strongly prefer modules as the primary reading structure for stack context and
+other overall documents. Readers should find their module's context directly,
+without reconstructing it from separate frontend, backend, database, provider,
+or service inventories. Use the same module names as `modules/` and a
+consistent order across overviews where practical.
+
+Start with a compact whole-product orientation when useful, then module-named
+sections or clearly labeled diagram groups. For each module, show only the
+context that matters: its responsibility, participating physical systems and
+state, external or inter-module connections, and direct public-boundary links.
+Keep module-specific rationale beside that section. One module can have one
+section and one diagram; do not add an empty outline or one file per module.
+
+Preserve the difference between logical ownership and physical deployment.
+One service may execute several modules and one module may span services.
+Identify shared infrastructure once in the overall view, then use the same
+`ARCH-*` identities or explicitly labeled references in module views. Do not
+duplicate full service descriptions, imply several copies of one database, or
+draw logical modules as deployed services. Label a module group as a logical
+reading lens, not a runtime or trust boundary.
+
+Apply this organization to deployment, coordination, and reference-only
+experience overviews when those documents exist. The overviews link to owned
+rules and constraints; they do not repeat them. Use a different primary
+organization only for a concrete readability or topology reason, explain it
+briefly, and retain a direct module-oriented reading path. A generic service
+inventory alone is not a sufficient module-oriented overview.
+
+### Deployment placement
+
 Show ordinary deployment placement here. Create a separate deployment view only
 when environment, region, network, failover, or rollout topology makes the stack
 context unreadable. Reuse the same `ARCH-*` IDs and show only the added topology.
@@ -564,9 +611,10 @@ Preserve separate bounded connections for genuine concurrent transactions,
 listeners, long-running streams, or required workload isolation. Do not invent
 pool sizes or load-test ceremony without a stated provider or product bound.
 
-Place security and operational controls on the node, connection, or trust zone
-where they apply. Do not draw logical APIs, events, records, policies, or
-capabilities as peer services.
+Place references to module-owned security and operational controls on the node,
+connection, or trust zone where they apply. Their actual policy and behavior
+remain inside the owning module. Do not draw logical APIs, events, records,
+policies, or capabilities as peer services.
 
 ### Coordination overlay
 
@@ -577,17 +625,24 @@ lock or lease, its sequence plus any persisted ERD fields is simpler.
 
 The overlay shows physical contenders, the narrow coordination scope, the
 lock, lease, queue, or comparable mechanism, where its state or ownership
-lives, expiry and fencing when applicable, and the protected resource or write.
+lives, and the protected resource or write. Link the module owners of expiry,
+fencing, and other behavioral guarantees rather than defining them here.
 Reuse existing `ARCH-*` and `DATA-*` IDs. Assign a stable `COORD-*` ID only when
 the mechanism is referenced from several artifacts. Link to the `SEQ-*` that
 owns detailed process logic instead of copying message order, retry behavior,
 or recovery into the overlay.
 
-Keep the overlay in `architecture/stack-context.md` by default. Move it to
+Keep a reference-only overlay in `architecture/stack-context.md` by default. Move it to
 `architecture/coordination.md` only when it would make the main stack diagram
 unreadable; the separate file remains a focused stack-context view, not a new
 required diagram type. A coordination overlay explains contention but never
 replaces the requirement to justify an exceptional lock or lease.
+
+Normative scope, expiry, fencing, contention guarantees, and operating rules
+remain with their owning module's data and process diagrams. Apply the same
+boundary to deployment views: root topology may show placement, but rollout,
+failover, maintenance, and recovery behavior belongs inside a module. A root
+overview links those owners rather than specifying the behavior independently.
 
 ## Decision tables
 

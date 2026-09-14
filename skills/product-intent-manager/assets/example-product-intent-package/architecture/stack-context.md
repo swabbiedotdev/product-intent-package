@@ -1,5 +1,11 @@
 # Stack context
 
+## Module: Counter
+
+Module owner: [Counter](../modules/counter/experience/user-flows.md#flow-001-read-and-increment-the-counter).
+This section is the Counter module's physical context, not a separate runtime
+boundary. Counter is the only module in this small example.
+
 `ARCH-001` through `ARCH-004` provide `CAP-001` for Counter 1.0.
 
 ```mermaid
@@ -18,9 +24,12 @@ flowchart LR
   end
 ```
 
-`SEQ-001` and `SEQ-002` show the consequential communication among these nodes.
+The [Counter module sequences](../modules/counter/sequences/sequences.md)
+own consequential communication and atomicity; the
+[module's quality constraints](../modules/counter/quality/constraints.yaml)
+own persistence across deployment and rollback. This view maps physical owners.
 
-## Current rationale
+### Current rationale
 
 - The browser owns only interaction state because durable state in the client
   would make reload and unknown-outcome recovery unreliable.
@@ -31,5 +40,3 @@ flowchart LR
   allow reconciliation after a lost response.
 - Vercel hosts the browser and API so the complete user-facing path can be
   deployed together, while Supabase separately provides durable database state.
-- Backups and rollback-safe data handling are necessary because application
-  deployment or rollback must not reset the product's persisted counter.

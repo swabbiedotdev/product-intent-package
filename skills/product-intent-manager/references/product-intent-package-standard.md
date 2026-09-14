@@ -12,7 +12,7 @@ log, decision history, or proof that every possible artifact exists.
 This standard defines format `7.0.0`. Format 7 makes the PIP a pure current-
 intent package:
 
-- the default package has three files;
+- all product logic has a named module owner, including in the three-file starter;
 - product context stays minimal; textual acceptance is exceptional;
 - package and item statuses, readiness fields, signatures, confirmation
   records, implementation observations, and handoff records are removed;
@@ -28,9 +28,10 @@ The default package is:
 | --- | --- |
 | `product.yaml` | Minimal product context: name, release, outcome, boundary, actors, capabilities, exclusions, measures, optional DCL, and direct links; no behavioral logic |
 | `architecture/stack-context.md` | Physical clients, services, managed platforms, stores, external systems, responsibility, owned state, deployment placement, and connections |
-| `experience/user-flows.md` | Actor goals, actions, surface topology, visible states, choices, failure, recovery, and outcomes |
+| `modules/primary-capability/experience/user-flows.md` | The initial module's actor goals, actions, visible states, choices, failure, recovery, and outcomes |
 
-Populate these three files. Do not pre-create optional directories or empty
+Rename `primary-capability` to the actual capability and populate these files.
+This is a minimal starter, not a limit on distinct logic owners. Do not pre-create optional directories or empty
 placeholders. Add another artifact only when it communicates distinct
 information needed to understand, build, or recognize the intended product.
 
@@ -38,31 +39,58 @@ Use these conventional paths when an optional artifact is needed:
 
 | Optional artifact | Conventional path |
 | --- | --- |
-| Unique acceptance cases that cannot be meaningfully diagrammed | `acceptance.yaml`, only under the exception below |
+| Unique acceptance cases that cannot be meaningfully diagrammed | `modules/<module>/acceptance.yaml`, only under the exception below |
 | Editing authority | `governance.yaml` |
-| Intended journey | `experience/journeys/JOURNEY-*.md` |
-| Screen detail or local mockup | `experience/screens.yaml`, `experience/mockups/` |
-| Product-specific design patterns | `experience/design-system.md` or a link to the authoritative design system |
-| Shared rule/decision diagrams or state machines | `behavior/rules.md`, `behavior/state-machines.md`; `behavior/decision-tables.md` only for the compact-matrix exception below |
-| Data model or product-significant schema | `data/data-model.md`, `data/schema.yaml` |
-| Shared, external, or product-significant contracts | `contracts/contracts.yaml` or `contracts/openapi.yaml` |
-| Runtime sequences | `sequences/sequences.md` |
-| Measurable quality constraints | `quality/constraints.yaml` |
-| Complex deployment topology | `architecture/deployment.md` |
-| Complex coordination topology | `architecture/coordination.md` |
-| Capability module boundary and internal owners | `modules/<capability>/boundary.md` and only the needed local artifacts |
-| Cross-module runtime composition | `workflows/<process>.md`, or an existing focused sequence |
+| Intended journey | `modules/<module>/experience/journeys/JOURNEY-*.md` |
+| Screen detail or local mockup | `modules/<module>/experience/screens.yaml`, `modules/<module>/experience/mockups/` |
+| Product-specific design patterns | `modules/<module>/experience/design-system.md` or a module-owned link to the authoritative design system |
+| Shared decisions or state machines | `modules/<module>/behavior/rules.md`, `modules/<module>/behavior/state-machines.md`; local decision tables only for the compact-matrix exception below |
+| Data model or product-significant schema | `modules/<module>/data/data-model.md`, `modules/<module>/data/schema.yaml` |
+| Shared, external, or product-significant contracts | `modules/<module>/contracts/contracts.yaml` or `modules/<module>/contracts/openapi.yaml` |
+| Runtime sequences | `modules/<module>/sequences/sequences.md` |
+| Measurable quality constraints | `modules/<module>/quality/constraints.yaml` |
+| Complex deployment or coordination overview | `architecture/deployment.md`, `architecture/coordination.md`; topology and links only, with rules owned in modules |
+| Public module boundary | `modules/<module>/boundary.md`, or a section of an existing module diagram |
+| Cross-module runtime composition | `modules/<owner>/workflows/<process>.md`, or an existing sequence inside that module |
 
 See [Artifact Responsibilities](artifact-responsibilities.md) for the trigger
 and ownership of each artifact.
 
 ## Capability modules
 
-Use capability modules when intertwined logic prevents useful local review.
-Keep one canonical PIP and one minimal root `product.yaml`; small products keep
-the three-file default. The paths above are conventions, not a requirement to
-keep all sequences or data records in global type-based directories. Existing
-paths may remain when direct boundaries already provide isolation.
+All product logic must live inside named `modules/<module>/` owners. Keep one
+canonical PIP and one minimal root `product.yaml`. This is the default at every
+product size; a small product may have one module. The module's internal file
+names and subdivision are flexible, but placing normative content outside
+modules is not an equivalent organization.
+
+Root content is limited to product context, optional editing authority,
+physical topology, and navigation or reference-only overviews. Root views may
+show participants, module relationships, and links to owned outcomes; they
+must not independently define branches, ordered workflows, data invariants,
+permissions, recovery, interaction rules, or quality constraints. Do not leave
+top-level `workflows/`, `sequences/`, `data/`, `behavior/`, `contracts/`,
+`quality/`, or normative `experience/` directories as a parallel logic layer.
+Root context may state product goals and measures; the precise logic and
+constraints that realize them have module owners.
+
+Strongly recommend organizing overall documents, especially stack context,
+by the same modules as the rest of the PIP. Module ownership is also the reader's
+navigation structure, not merely a storage convention. Use module-named
+sections or clearly labeled diagram groups, with a compact whole-product map
+when useful and direct links to each module's public boundary. Apply this to
+existing deployment, coordination, and experience overviews without requiring
+additional documents. Follow
+[Module-first overview documents](artifact-responsibilities.md#module-first-overview-documents)
+to preserve accurate shared physical topology without duplicating module logic.
+
+Shared or cross-cutting does not mean ownerless. Authorization, artifact
+privacy, reconciliation, execution, design-system rules, and product-wide
+quality policies belong to the coherent module responsible for them. Other
+modules consume that owner's exported guarantees. Do not solve this by making
+a generic `shared`, `core`, `data`, or `workflows` dumping-ground module
+that merely contains the old intertwined PIP; choose boundaries by responsibility.
+Do not invent infrastructure or a module per table just to demonstrate structure.
 
 A module groups a coherent responsibility whose internal logic can be reviewed
 against an explicit public promise. Choose boundaries around reusable behavior
@@ -106,12 +134,13 @@ actually defines the result and effects the caller relies on.
 
 ### Internal ownership and composition
 
-Group internal sequences, shared decisions, relevant state/data views, and
-module-local experience detail under the capability when useful. Add only the
+Group internal sequences, shared decisions, state/data views, quality constraints,
+and experience detail under their owning module. Add only the
 artifacts the module needs: a small stateless module may fit in one file. Do not
 add per-module `product.yaml`, acceptance files, versions, or review ledgers as
-modularity machinery. The root retains product context, physical architecture,
-and cross-module experience; it links local detail instead of duplicating it.
+modularity machinery. A genuinely non-diagrammable acceptance exception may
+still live with its module owner. Cross-module experience logic belongs to the
+responsible domain or orchestration module, not a root experience specification.
 
 Each entity has one full schema/ERD owner. Other views use linked reference
 projections. If several modules legitimately share a physical record, make
@@ -120,11 +149,15 @@ copying the full entity or pretending the database is separated. An external
 reader relies on an exported read/projection contract; an external writer uses
 an owned mutation operation or the explicit shared integration boundary.
 
-Cross-module workflows own call order, orchestration decisions, and handling
-of public outcomes. They do not repeat the called algorithms. They retain
+Cross-module workflows are themselves module-owned logic. Put each in the
+domain module responsible for the outcome, or in a coherent orchestration module
+when it has a distinct responsibility. That owner exposes its own public
+boundary and owns call order, orchestration decisions, and handling of public
+outcomes. Do not create a free-standing root workflow layer or a module for each
+workflow file. These workflows do not repeat the called algorithms. They retain
 detailed logic that genuinely belongs to the composition, especially shared
 transactions, lock order, revalidation, cancellation races, or compensation.
-Keep one owning integration sequence for each such invariant, naming the
+Keep one integration sequence inside its responsible module for each such invariant, naming the
 participating module operations, physical state, and commit/failure behavior.
 Do not split an atomic operation into independently committing calls merely to
 make modules appear independent. Constant reliance on each other's internals
@@ -140,11 +173,20 @@ during a review; do not maintain duplicate reverse edges.
 ### Reorganizing an existing package
 
 Start with one or two reusable boundaries and their real consumers before a
-large file move. Separate public promises from internal logic, split broad
+large file move when sequencing an authorized migration. This is a migration
+order, not permission for a completed organization to leave other logic outside
+modules. Separate public promises from internal logic, split broad
 records by ownership, and preserve behavior, stable IDs, and direct links.
 Keep a concise pointer at an old path when external references still need it;
 do not leave a second specification there. Migration plans and review results
 stay outside the canonical PIP.
+
+Existing nonmodular records remain authoritative for their behavior until an
+authorized migration moves them. In a scoped audit or implementation task,
+identify the relevant owners and report the structural gap; do not redesign the
+product or silently migrate the whole package. A request to propose a complete
+organization must assign all existing logic, including shared and orchestration
+logic, to modules rather than treating the pilot as the final layout.
 
 Exercise [module-bounded review](change-and-handoff.md#module-bounded-review)
 on a representative change: can the reviewer establish why consumers remain
@@ -214,6 +256,54 @@ authorization to rewrite unrelated PIPs or a requirement for extra artifacts.
 Review question: with narrative prose hidden, can a reader follow the affected
 conditions to every material outcome using the diagrams and their explicitly
 linked structured inputs? If not, the logic representation is incomplete.
+
+### Process-connected logic: no orphan rules
+
+Every piece of product logic must be part of an actual documented process:
+either defined at the step where it applies, or explicitly called from that
+process through a linked shared rule or module operation. A process is concrete
+intended behavior with an entry trigger and an outcome; it need not already be
+implemented. A rule documented for hypothetical future use without such a
+process is not integrated product intent.
+
+For each intended application site, the consuming diagram shows:
+
+- the trigger, stage, or condition under which the logic runs;
+- the local rule or direct link to the exact shared operation/diagram;
+- the consequential inputs and their sources; and
+- how the result changes the next action, permitted transition, durable effect,
+  refusal, or visible outcome, including material failure handling.
+
+Shared logic stays in one owner; callers show invocation and consequences
+without copying its predicates. A nested call chain is valid when it ultimately
+starts at a documented user action, external request or event, schedule, or
+operating trigger. A public endpoint's documented request-handling process is
+an entry point; it does not need an invented internal caller. Rules or helpers
+that only reference one another, with no process entry path, remain orphaned.
+
+A `RULE-*` ID, `applies_to` field, module membership, schema declaration,
+backlink, or mention in a table of contents does not establish application.
+Neither does a process that says only “see rules” or calls a rule but never
+uses its result. A complete decision diagram still needs its actual consuming
+process. A process-local rule needs no separate rule file or extra ID.
+
+Declarative data invariants and quality constraints need not masquerade as
+function calls. Link their owners at the actual read, write, state transition,
+interaction, or operating step they constrain, showing enforcement or required
+effect where it affects the outcome. Keep physical constraint definitions and
+exact bounds in their existing owners. Do not invent a background job, runtime
+guard, duplicated check, or new mechanism solely to make a requirement appear
+connected. Product context and rationale are not runtime rules, and this does
+not require a process for every descriptive sentence or schema field.
+
+In a scoped review, check the affected rules and their intended application
+sites using existing diagrams and direct links; do not build a global rule
+registry, call graph, coverage ledger, or artificial consumer list. If current
+intent defines the integration, document it without changing behavior. If the
+application point or effect is unresolved, report the gap and resolve that
+product choice before inventing a connection. Remove a rule only when its
+obsolescence or exclusion is established within the authorized scope—not merely
+because no caller was found.
 
 ## Canonical current intent
 
@@ -357,9 +447,9 @@ Omit `acceptance.yaml` unless a unique acceptance case cannot be represented
 meaningfully in a diagram or its attached notes. Keep only the irreducible case,
 a brief `why_not_diagram` explanation, and a direct `verifies` link to the
 relevant owner. The explanation must identify a real representation limitation,
-not merely say that prose is easier. An isolated qualifying case may stay inline
-on its capability; a separate file is warranted only when qualifying cases need
-their own small owner. Do not repeat the same case in both files.
+not merely say that prose is easier. Keep a qualifying case beside its module
+owner or in that module's acceptance file, not inline in the root product
+record. Do not repeat the same case in both places.
 
 More scenarios, cross-capability scope, complex gates, or a crowded diagram do
 not qualify. Extend or split the owning diagrams. Exact quality values and
@@ -427,6 +517,15 @@ Recommend a DCL line for each implementable sequence. Do not copy an override
 onto connected user flows or state machines. Keep implementation assessments
 and target-versus-implementation comparisons in audit or task notes outside the
 PIP. Exact requirements always override the number.
+
+Correctness is outcome-focused, not a demand for byte-identical implementation
+results or stored representations. Especially at lower DCLs, do not let
+speculative determinism, exhaustive equivalence, or data-perfection machinery
+delay an early-stage product. Preserve actual product invariants and require
+exact bytes only where a named contract or concrete correctness dependency
+needs them. This also applies when DCL is omitted. See
+[Outcome-focused correctness](development-complexity.md#outcome-focused-correctness-not-byte-identity)
+for the distinction, narrow exceptions, and handling of explicit PIP requirements.
 
 DCL does not decide whether a rare or complex edge case is automated. When
 current intent does not already resolve the case, ask the product manager,

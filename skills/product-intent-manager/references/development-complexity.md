@@ -57,6 +57,54 @@ These are judgment inputs, not numeric dimensions to average. Choose the lowest
 level that safely satisfies the current intent. Reassess when users,
 interactions, risks, or credible load materially change.
 
+## Outcome-focused correctness, not byte identity
+
+At every DCL—and when DCL is omitted—optimize for a useful, correct product
+within its actual constraints, not implementation or data perfection.
+Especially at lower DCLs, byte-identical output, exhaustive historical
+equivalence, and identical intermediate representations are usually not real
+requirements. They must not become default prerequisites that complicate or
+delay an early-stage product.
+
+Distinguish semantic correctness from representation identity. Parsed values
+can satisfy a contract despite irrelevant JSON key ordering or whitespace;
+recomputed derived data can remain valid without identical storage bytes.
+Such differences are harmless only when no consumer or stated invariant relies
+on them. Ordering, precision, timestamps, identifiers, and provenance can be
+meaningful—do not normalize them away indiscriminately.
+
+Data integrity protects the required values, identities, relationships, access
+boundaries, and effects. Preventing a duplicate charge or lost saved work does
+not require identical serialization of every record. Do not add canonical
+encodings, content hashes, replay systems, cross-version comparison layers,
+backfills, or broad reconciliation solely to eliminate inconsequential
+differences. Prefer existing helpers, ordinary validation, and focused checks
+of required outcomes and dangerous failure paths.
+
+Before spending material effort on exact equivalence, identify the consumer,
+contract, or concrete failure that requires it. Exact bytes may matter for a
+signature's defined input, a content-addressed object's identity, an external
+protocol, or an explicit reproducibility requirement. Preserve that narrow
+boundary without extending byte identity to unrelated data or processes.
+Higher DCL alone does not justify universal determinism either.
+
+If no requirement or material consequence depends on byte identity, proceed
+with the simpler semantically correct implementation; do not stop delivery for
+an invented perfection gate. Tests should assert relevant fields, outcomes,
+and invariants rather than entire incidental byte streams. Exact comparisons
+are fine when useful and cheap; this is not a ban on equality tests, checksums,
+snapshots, or deterministic helpers, nor a reason to remove harmless existing
+checks.
+
+If the canonical PIP explicitly requires costly identity or reproducibility
+that appears disproportionate, explain the cost and propose the smallest
+adequate alternative before changing that intent. Do not silently weaken
+security, privacy, monetary correctness, persisted-data safety, or relied-on
+compatibility. Do not invent numeric tolerances or treat user-visible drift
+as equivalent without current product authority. Choose manual recovery or
+eventual consistency only where the PIP permits it; low DCL is not permission
+to lose or corrupt authoritative data.
+
 ## Decide edge-case handling separately
 
 DCL does not determine whether a rare or complex edge case deserves automatic

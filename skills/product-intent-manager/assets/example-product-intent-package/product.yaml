@@ -19,10 +19,10 @@ capabilities:
       - ACTOR-001
     outcome: The user can view and advance shared progress toward completion.
     behavior_refs:
-      - experience/user-flows.md#flow-001-read-and-increment-the-counter
-      - sequences/sequences.md#seq-001-increment-once
-      - sequences/sequences.md#seq-002-load-or-reconcile-progress
-    quality_ref: quality/constraints.yaml
+      - modules/counter/experience/user-flows.md#flow-001-read-and-increment-the-counter
+      - modules/counter/sequences/sequences.md#seq-001-increment-once
+      - modules/counter/sequences/sequences.md#seq-002-load-or-reconcile-progress
+    quality_ref: modules/counter/quality/constraints.yaml
 exclusions:
   - Authentication, accounts, and multi-tenancy
   - Changing or resetting the target

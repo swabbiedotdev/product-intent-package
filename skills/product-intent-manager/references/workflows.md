@@ -16,11 +16,22 @@ inputs and outcomes, references, and current product meaning. Do not invent new
 behavior to fill a branch or migrate unrelated packages without authorization.
 Proportionality means fewer focused diagrams, not prose-only consequential logic.
 
-When intertwined logic needs modularization, apply
+Apply [Process-connected logic](product-intent-package-standard.md#process-connected-logic-no-orphan-rules)
+in every authoring and review mode. Start from documented process triggers and
+outcomes; keep local rules at their application steps and extract shared logic
+only with explicit consuming calls and result handling. Do not add standalone
+rules for possible future use. For an existing orphan, establish its intended
+application or resolve the gap without inventing behavior or silently deleting
+the requirement.
+
+In every authoring mode, apply
 [Capability modules](product-intent-package-standard.md#capability-modules).
-Pilot explicit public boundaries and real consumers before reorganizing the
-whole package. Keep one product record and use module-local artifact folders
-only where helpful; preserve shared-state and cross-module transaction owners.
+All product logic is module-owned, including user experience, shared
+infrastructure, data rules, quality policies, and orchestration. Keep one root
+product record and context-only architecture; do not propose a parallel root
+workflow, sequence, data, quality, or normative experience layer. A small PIP
+can have one module and a small number of files. Pilot boundaries and real
+consumers to sequence an authorized migration, not as the final ownership scope.
 Do not change product behavior or implementation topology as a side effect of
 moving PIP records. During scoped updates or audits, use
 [Module-bounded review](change-and-handoff.md#module-bounded-review) rather than
@@ -29,17 +40,21 @@ requested scope.
 
 ## Create
 
-1. Copy the three-file template from `assets/product-intent-template/`.
+1. Copy the module-first template from `assets/product-intent-template/`.
+   Rename `modules/primary-capability/` to the product's actual initial capability.
 2. In `product.yaml`, set format `7.0.0`, product name, release, outcome,
    boundary, actors, capabilities, exclusions, measures, and optional product-
    wide DCL.
 3. Put observable outcomes in their diagrams. Keep `product.yaml` minimal;
    use `assets/acceptance-template.yaml` only for unique cases that cannot be
-   meaningfully diagrammed, explaining why. Do not copy diagrammed behavior.
+   meaningfully diagrammed, explaining why and keeping the case in its module.
+   Do not copy diagrammed behavior.
 4. Draft the physical product boundary in `architecture/stack-context.md` and
-   actor-visible paths in `experience/user-flows.md`.
+   actor-visible paths inside the owning module's `experience/user-flows.md`.
 5. Add state, data, sequence, rule, contract, journey, screen, quality, or
-   deployment artifacts only when each adds distinct meaning.
+   deployment artifacts only when each adds distinct meaning. Every rule,
+   workflow, schema, and constraint belongs inside its responsible module;
+   optional root views contain only topology, context, and owner links.
 6. Add concise current rationale in the diagram file that owns every non-
    obvious choice.
 7. Apply the skill-level checks in
@@ -95,7 +110,8 @@ frequency, urgency, or volume justifies them.
 
 For an incomplete canonical package:
 
-1. Read the three core files and existing optional artifacts.
+1. Read root product context, physical architecture, and the module owners and
+   dependencies relevant to the requested completion scope.
 2. Check whether a reader can identify the release outcome, boundary, actors,
    capabilities, visible experience, physical ownership, observable acceptance,
    and material constraints.
@@ -197,11 +213,13 @@ For a format-6 or similarly heavy package:
    Omit governance only when current repository or project guidance already
    makes editing authority unambiguous.
 5. Preserve acceptance meaning in the diagrams before removing redundant YAML.
-   Keep either inline acceptance or `acceptance.yaml` only for unique cases
-   that cannot be meaningfully diagrammed; explain why and link their owners.
+   Keep acceptance beside its module owner or in module-local `acceptance.yaml`
+   only for unique cases that cannot be meaningfully diagrammed; explain why.
 6. Consolidate context/component/container views into stack context, screen maps
-   into user flows, and conceptual/persisted relationships into one data-model
-   view when those facts remain needed.
+   into module-owned user flows, and conceptual/persisted relationships into
+   module-owned data views when those facts remain needed. Assign all shared
+   logic and cross-module workflows to responsible modules; keep one full
+   entity definition with linked projections rather than a root catch-all ERD.
 7. Replace scoped target/PIP/implementation DCL comparisons with one optional
    product default and narrow current-intent overrides. Move implementation
    comparisons to audit notes.

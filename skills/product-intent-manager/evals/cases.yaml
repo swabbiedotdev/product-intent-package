@@ -3,7 +3,8 @@ cases:
     prompt: Create a Product Intent Package for a small single-user application.
     should_activate: true
     must:
-      - start with the three default format-7.0 files
+      - start with root product context and physical architecture plus one named module owning the small product's behavior
+      - do not treat small scope as an exemption from module ownership or require unnecessary boundary files and subdivisions
       - keep product.yaml to minimal context and direct links with observable behavior in diagrams
       - omit acceptance.yaml unless a unique case cannot be meaningfully diagrammed and explain that limitation
       - omit package and item status, readiness, signatures, confirmation metadata, implementation findings, and handoff records
@@ -22,13 +23,13 @@ cases:
       Publication and a funding debit must commit atomically. Preserve behavior.
     should_activate: true
     must:
-      - keep one canonical product record and optional capability-local artifacts without per-module manifests or acceptance checklists
+      - keep one canonical product record and all product logic in named modules without per-module manifests or acceptance checklists
       - establish diagram-owned public operation promises before relying on folder separation
       - separate preparation from state acceptance and raw score meaning from ranking policy without inventing new services or execution owners
       - keep ephemeral and persisted effects explicit without silently adding storage to the private tool
       - retain one owner for shared atomic publication and funding behavior and for coupled Catalog and Job finalization
       - keep full entities with one owner and use linked projections rather than duplicate schemas
-      - have workflows consume linked public outcomes without repeating algorithms or hiding orchestration failure behavior
+      - have workflows live inside their responsible domain or orchestration module and consume linked public outcomes without repeating algorithms or hiding orchestration failure behavior
       - preserve stable references and test the review boundary on a representative change before broad file moves
       - keep migration steps and review evidence outside canonical intent
 
@@ -42,13 +43,77 @@ cases:
       no link to its owner. Keep the review scoped to affected logic.
     should_activate: true
     must:
-      - read applicable root constraints, changed internals, their boundaries, and consumed dependency contracts
+      - read root context, module-owned applicable constraints, changed internals, their boundaries, and consumed dependency contracts
       - review ranking and affected selection outcomes without reopening an unchanged raw-scoring algorithm by default
       - classify changed score meaning and transaction guarantees as exported semantic changes despite unchanged signatures or boundary text
       - discover the unlinked shared-state consumer and report the incomplete boundary rather than using missing links to stop review
       - inspect directly affected consumers and propagate only when their guarantees or shared invariants are affected
       - review publication and funding owners with their shared integration sequence and reject the split as behavior-preserving modularization
       - state scope and verification limits outside the PIP without claiming structural checks prove isolation
+
+  - id: reject-partially-modular-layout
+    prompt: >-
+      Propose the complete PIP organization for a product with collectives,
+      discovery, work, a token program, and paid HTTP. Existing records describe
+      funded work, acquired earnings, management continuity, authorized requests,
+      private artifacts, chain reconciliation, shared data and onchain state,
+      quality constraints, user flows, and design-system rules. A draft puts the
+      five features in modules but leaves those other records in root workflows,
+      sequences, data, quality, and experience folders. No product behavior or
+      implementation changes are requested.
+    should_activate: true
+    must:
+      - identify the draft as only partially modular because shared and orchestration logic lacks module ownership
+      - assign every listed logical responsibility to an existing coherent module or a justified additional module
+      - put cross-module workflows inside the responsible domain or orchestration module with a public boundary
+      - give shared authorization, privacy, reconciliation, state, and quality policies explicit module owners
+      - retain one full entity owner and link projections rather than a root data model that owns every module's invariants
+      - keep root product context and physical topology without independent rules in overview or design-system prose
+      - avoid a generic shared or workflows dumping-ground module and avoid a module per file
+      - preserve behavior, atomicity, dependencies, stable references, and review stopping rules
+      - do not treat a pilot extraction as a complete modular organization or claim folders alone prove isolation
+
+  - id: module-oriented-stack-context
+    prompt: >-
+      Reorganize the overview documents for a modular PIP. Catalog, matching,
+      and delivery share one web backend and one database; catalog and delivery
+      also use the same worker service. The stack-context document is currently
+      organized only as frontend, backend, storage, and providers. Existing
+      deployment and coordination overviews use different module names. Preserve
+      the physical architecture and all product behavior.
+    should_activate: true
+    must:
+      - strongly prefer module-named sections or diagram groups using the canonical module names
+      - provide a direct module-oriented reading path through stack context and the existing overviews
+      - keep a compact whole-product orientation only where useful rather than relying solely on layer inventories
+      - identify shared services once and reuse physical identities or labeled references across module views
+      - show each module's relevant systems, state, connections, and public-boundary links without repeating internal logic
+      - distinguish logical module groupings from deployment and trust boundaries
+      - preserve the shared backend, database, and worker instead of inventing per-module deployments
+      - avoid mandatory new overview files, duplicated service specifications, or empty module sections
+
+  - id: no-orphan-product-logic
+    prompt: >-
+      Review this PIP organization without changing product behavior. A shared
+      eligibility rule has a complete decision diagram and applies_to: CAP-001,
+      but no process invokes it. A publication process references a rules folder,
+      calls another rule without handling its result, and never supplies the
+      inputs. Two helper operations call each other without an entry trigger.
+      An external API has a documented request-handling sequence, while a data
+      uniqueness constraint is already linked at the sequence's guarded write.
+      A final rule has no caller and unclear current purpose. All records have
+      module owners. Is the logic sufficiently integrated?
+    should_activate: true
+    must:
+      - identify module ownership, a complete diagram, applies_to, and generic references as insufficient evidence of actual process application
+      - require explicit application points, input provenance, and meaningful result handling in documented consumers
+      - reject the helper-only call cycle as orphan logic without a documented entry trigger
+      - recognize the external request-handling sequence as a valid process entry without inventing an internal caller
+      - preserve declarative constraint ownership and its existing write-step connection without adding a redundant runtime check or background job
+      - resolve the unclear rule's intended application or obsolescence rather than inventing a consumer or silently deleting it
+      - preserve one shared rule owner and avoid copying predicates into callers
+      - inspect affected application sites without creating a global rule registry, call graph, or coverage ledger
+      - distinguish documented intended processes from evidence that implementation already exists
 
   - id: reconstruct-existing-product
     prompt: Reconstruct the current intent of this existing product from its screens,
@@ -244,6 +309,28 @@ cases:
       - preserve safe public output as canonical intent unless an authority whose scope covers the complete change changes it
       - create an isolated coherent PIP fork only if the changed end state should be considered
       - avoid implementation observations, proposal statuses, or as-built diagrams in the canonical package
+
+  - id: early-product-semantic-correctness
+    prompt: >-
+      Plan implementation verification for a DCL 3 pilot. The canonical PIP
+      requires correct saved values, no duplicate charges, and a signed external
+      payload whose exact bytes are defined by its protocol. A proposed plan
+      blocks delivery until all JSON exports, derived records, and generated
+      outputs are byte-identical to an old prototype. Their incidental key
+      ordering and whitespace are not consumed or required by the PIP. The
+      plan adds canonical serialization, a historical replay service, and a
+      full backfill to remove those differences. No other behavior changes
+      are requested.
+    should_activate: true
+    must:
+      - reject universal byte identity as an invented delivery prerequisite rather than a default integrity requirement
+      - prefer the smallest implementation and semantic checks preserving required values, relationships, and effects
+      - avoid speculative canonicalization, historical replay, and backfill for irrelevant representation differences
+      - preserve exact protocol bytes at the signature boundary and prevent duplicate charges and lost saved data
+      - avoid extending the signature requirement to unrelated records or removing useful inexpensive equality checks
+      - distinguish incidental representation differences from meaningful ordering, precision, identities, timestamps, and provenance
+      - do not invent tolerances, weaker consistency, or a changed product contract merely because the DCL is low
+      - propose an authorized PIP change before relaxing any explicit costly identity requirement
 
   - id: development-complexity-default-and-overrides
     prompt: Set DCL for a product whose ordinary paths are a small production product,

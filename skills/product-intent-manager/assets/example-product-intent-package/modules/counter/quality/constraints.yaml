@@ -6,3 +6,11 @@ constraints:
       - SEQ-001
     measure: Accepted increment latency, receipt uniqueness, and persistence consistency under concurrent load.
     target: p95 latency is no more than 500 milliseconds at 10 requests per second, with no lost or duplicate accepted increments.
+  - id: QC-002
+    name: Persistence across deployment and rollback
+    applies_to:
+      - CAP-001
+      - DATA-001
+      - DATA-002
+    measure: Retention of persisted counter and receipt state across application deployment and rollback.
+    target: Deployment and rollback do not reset persisted counter or receipt state; backups are maintained for recovery.

@@ -1,6 +1,8 @@
 schema_version: 7.0.0
 # Minimal product context only. Rules, gates, runtime logic, and observable
 # paths belong in diagrams; link their owners instead of copying them here.
+# All logic lives in modules/<module>/. Rename primary-capability to the actual
+# capability; do not add parallel root workflows, data, sequences, or quality.
 name: ''
 release: ''
 outcome: ''
@@ -22,9 +24,8 @@ capabilities: []
 #   name: ''
 #   actor_ids: []
 #   outcome: ''
-# Inline acceptance is exceptional: only a unique case that cannot be
-# meaningfully diagrammed, with why_not_diagram and a direct verifies link.
-# Do not add acceptance lists just because a capability exists.
+# Put a qualifying non-diagrammable acceptance case with its module owner,
+# never in this root context file. Include why_not_diagram and an owner link.
 # Add `dcl_override` only when this capability materially differs from the
 # product default. See the Product Intent Manager DCL guidance.
 

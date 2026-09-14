@@ -1,11 +1,22 @@
 # User flows
 
+This file belongs to the initial capability module. Rename its module directory
+to the actual responsibility. Keep its public behavior here; add internal
+diagrams within the same module only when needed. Shared or cross-module
+behavior also needs a module owner, not a root workflow or sequence file.
+
 Show actor actions, choices, navigation, and visible product outcomes. Use one
 focused flow per actor goal, including consequential failure and recovery
 paths. This view owns the user-visible path, not internal execution.
 
 Link system work to its `SEQ-*`, `SM-*`, or rule diagram. Do not draw service
 calls, database reads, authorization checks, or query mechanics here.
+
+Every rule must belong to a documented process or be explicitly called by one.
+For shared internal logic, the owning sequence shows invocation, input sources,
+and outcome handling; a link from this user flow is not a substitute. Keep
+purely visible conditions at their actual interaction step rather than in an
+isolated rule list.
 
 Visually group actions and states by consequential user-visible surface. Label
 each boundary with `SURFACE · Name`, or `SCREEN-* · Name` when another artifact

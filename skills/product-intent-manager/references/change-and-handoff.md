@@ -38,9 +38,13 @@ or product history inside the PIP.
 
 Use this procedure for changes and scoped audits in a modular PIP. It narrows
 the reasoning scope, not the obligation to preserve a coherent product. A user
-request for a full-package audit still requires that scope.
+request for a full-package audit still requires that scope. All logic owners
+are modules, including orchestration and shared-policy owners. In a legacy
+nonmodular package, report the structural gap and inspect the necessary current
+owners without assuming modular isolation or silently migrating unrelated scope.
 
-1. Read root product context and applicable product-wide constraints, the
+1. Read root product context and the public contracts of modules owning
+   applicable product-wide constraints, the
    changed or audited module's public boundary and affected internals, and the
    public contracts of its direct dependencies that the work consumes. Do not
    recursively open dependency internals by default.
@@ -58,7 +62,8 @@ request for a full-package audit still requires that scope.
    consumer call sites and outcome handling; propagate farther only where their
    own guarantees or shared invariants are affected. Additive changes still
    require checking assumptions such as exhaustive outcome handling.
-5. Review the owning integration sequence and affected state owners whenever
+5. Review the integration sequence in its owning domain or orchestration module
+   and affected state owners whenever
    shared transactions, mutation ownership, locks, cancellation, or other
    cross-module invariants change. Product-wide policy changes may genuinely
    require broad review. If a contract is incomplete or a hidden dependency
@@ -167,6 +172,15 @@ Implementation verification should cover the core path and observable done
 condition, material failure or recovery behavior required by the PIP, and
 dangerous edge cases relevant to the change.
 
+Use [outcome-focused correctness](development-complexity.md#outcome-focused-correctness-not-byte-identity):
+compare required semantics and invariants, not incidental bytes. Before adding
+costly byte-for-byte snapshots, historical replay, canonicalization, or broad
+data reconciliation, identify the actual consumer or failure they protect.
+If none requires exact identity, use the simpler semantic check and continue
+delivery. Lower DCL should reduce unnecessary implementation and verification
+work, not weaken real safeguards. Keep exact comparisons where required or
+already useful and cheap; do not invent tolerances or silently relax the PIP.
+
 An edge case is dangerous when a plausible failure could cause an authorization,
 security, or privacy breach; incorrect money movement; data loss or corruption;
 an unsafe schema or migration result; a destructive or irreversible side
@@ -218,6 +232,21 @@ canonical PIP unchanged and use an isolated PIP fork for a concrete alternative.
 
 ### 2. Enough product and process meaning
 
+Check for orphan logic in the affected scope. For each rule or shared operation,
+locate its actual process application: a local diagram step or an explicit
+caller with input provenance and result handling. Follow nested calls far
+enough to identify the documented entry trigger. Module placement, inbound
+links, a public contract, an `applies_to` list, or a cycle of helper calls are
+not sufficient. Check intended application sites, not merely whether one
+arbitrary consumer exists. A data invariant or quality bound must constrain
+an identified process step; it need not be a separate function call.
+
+Flag missing application, an unused returned decision, or an undefined effect
+as an intent gap. Document existing intended integration, or ask about the
+missing product choice. Do not silently delete the rule or invent consumers,
+checks, or jobs to make the package look connected. Link validation proves
+references resolve, not that a process meaningfully applies the rule.
+
 Hide the narrative prose and inspect the rendered diagrams plus their directly
 linked structured inputs. Can a reader trace each affected rule, gate, priority,
 calculation, timeout, and failure/recovery path to its material outcome? Flag
@@ -242,6 +271,24 @@ Confirm that the package explains applicable:
 
 Use optional artifacts only where they add distinct meaning. An absent optional
 artifact is not a failure.
+
+Check ownership before accepting a proposed organization: every behavioral
+diagram, workflow, shared policy, data invariant, contract, and quality
+constraint must have a named module owner. Root architecture or experience
+overviews may link owners but cannot contain independent rules. A tree with
+feature modules plus root workflows, sequences, data, or quality specifications
+fails this check. Moving all leftovers into an undifferentiated shared module
+also fails to establish review isolation. Do not require a new file for every
+concern when a coherent existing module can own it.
+
+Check the reader's path as well as file ownership: can someone starting with a
+module find its stack context, shared infrastructure, connections, and owning
+contracts without reconstructing them from technology-layer inventories?
+Strongly prefer module-named sections or diagram groups in overall documents,
+with consistent names and direct links. Any different primary organization
+should have a concrete reason and still provide that module-oriented path.
+Shared services retain one physical identity; module grouping must not invent
+deployment or trust boundaries.
 
 For an existing-product or design-led implementation, also check that:
 
@@ -294,7 +341,8 @@ For product-significant database design, check that:
   badges, and key fields without duplicating full index definitions or promising
   query-planner behavior;
 - a coordination overlay is present only when multiple contenders or mechanisms
-  need a contention map, and it agrees with the linked sequence and data model;
+  need a contention map, and it references module-owned sequences and data
+  rather than defining coordination rules at the root;
 - connection design considers aggregate fan-out and combines process-local
   clients or pools where that preserves effective concurrency and session
   needs; and

@@ -5,7 +5,45 @@ description: Create, reconstruct, simplify, or update an explicitly requested Pr
 
 # Product Intent Manager
 
+## First principle: all product logic is module-owned
+
+Every PIP defines its product logic inside named `modules/<module>/` owners.
+This applies to small and large products, not only complex or reusable features.
+Include orchestration, authorization, private data handling, reconciliation,
+data invariants, quality constraints, shared infrastructure, and user-visible
+behavior. Cross-cutting logic is not an exception: give it a coherent module
+owner and an explicit public boundary. Do not leave a parallel top-level
+`workflows/`, `sequences/`, `data/`, `behavior/`, `contracts/`, `quality/`,
+or normative `experience/` tree outside modules.
+
+The root owns product context, physical topology, optional editing authority,
+and navigation—not behavioral rules. Root overview diagrams link module owners
+and introduce no independent logic. Modules are required; extra files and
+subdivisions are optional. A small product can have one small module.
+**Strongly prefer module-first organization in overall documents too.** Readers
+enter a PIP through a module, so organize `stack-context.md` and other existing
+overviews by the same module names, with direct owner links. A compact whole-
+product map can orient the reader, but a technology-layer or service inventory
+should not be the only reading path. Keep shared physical infrastructure clear
+without duplicating services or implying one deployment per module. See
+[Module-first overview documents](references/artifact-responsibilities.md#module-first-overview-documents).
+Read [Capability modules](references/product-intent-package-standard.md#capability-modules)
+before proposing a layout or authoring product logic. Existing nonmodular PIPs
+remain authoritative for behavior; report structural gaps without silently
+migrating unrelated scope or treating folder moves as proof of isolation.
+
 ## Read this first: diagram responsibilities
+
+**No orphan logic or rules.** Every rule lives within an actual documented
+process or is explicitly invoked by one, directly or through documented calls.
+A module owner, standalone rule diagram, exported operation, or generic link is
+not enough. The process shows the application point, input sources, and how the
+result affects its next action, state, or outcome. Trace the call chain to a
+concrete user action, request, event, schedule, or operating trigger; mutually
+referencing unused rules do not qualify. This describes intended processes,
+not a requirement that they are already implemented. Read
+[Process-connected logic](references/product-intent-package-standard.md#process-connected-logic-no-orphan-rules)
+before adding or reviewing shared rules.
 
 **Diagrams are the default home for product logic, not illustrations of prose.**
 Put rules, gates, eligibility, permissions, validation, calculations, precedence,
@@ -130,12 +168,12 @@ alignment. Report ticket drift separately from implementation drift.
 
 ## Keep the package proportional
 
-The default package has three files:
+The smallest starter has three files, with behavior already inside a module:
 
 ```text
 product.yaml
 architecture/stack-context.md
-experience/user-flows.md
+modules/primary-capability/experience/user-flows.md
 ```
 
 **Keep `product.yaml` and `acceptance.yaml` minimal. Neither is a home for logic.**
@@ -146,12 +184,16 @@ or scenario lists in any field, including `outcome`, `boundary`, `acceptance`,
 and `success_measures`. Diagrammed outcomes already provide acceptance meaning;
 do not restate them as YAML checklists.
 
+Rename `primary-capability` to the actual capability. Keep the module's public
+boundary in its owning diagram when that suffices; do not require a separate
+boundary file or every artifact type.
+
 Omit `acceptance.yaml` by default. Retain only unique acceptance cases that
 cannot be represented meaningfully in a diagram or its attached notes, with a
 brief reason why and a direct link to the relevant owner. The same exception
-applies to inline acceptance in `product.yaml`; keep an isolated exception
-inline, and use the separate file only when qualifying cases need their own
-small owner. Complexity, many branches, cross-capability scope, or convenience
+applies wherever acceptance is written; keep a qualifying exception in its
+module, beside its owner or in a small module-local acceptance file, not in the
+root product record. Complexity, many branches, cross-capability scope, or convenience
 are not reasons to put logic in either file. Split or extend diagrams instead.
 Before adding a line, ask: “Is this necessary product context, or genuinely
 non-diagrammable acceptance?” If neither, put it in the owning diagram or omit
@@ -175,17 +217,18 @@ matrices, change logs, readiness ledgers, or placeholder files.
 
 ## Modular PIPs and bounded review
 
-When intertwined logic makes a larger PIP difficult to review, organize one
-canonical package around capability modules with explicit public behavioral
-boundaries, internal diagrams, and owned state. Module folders are optional;
-small PIPs keep the three-file default. A module is not automatically a service,
-library package, or separate product. Do not create per-module product records,
-acceptance checklists, or dependency ledgers.
+Organize one canonical package around modules with explicit public behavioral
+boundaries, internal diagrams, and owned state. All logic has a module owner;
+choose the smallest coherent number of modules rather than a module per file,
+table, or operation. A module is not automatically a service, library package,
+or separate product. Do not create per-module product records, acceptance
+checklists, or dependency ledgers.
 
 Read [Capability modules](references/product-intent-package-standard.md#capability-modules)
 before defining or reorganizing these boundaries. Keep the public promise
-diagram-owned, internal logic separate, and cross-module workflows focused on
-composition. Preserve shared transactions and other real coupling explicitly.
+diagram-owned, internal logic separate, and cross-module workflows inside their
+owning domain or orchestration module. Preserve shared transactions and other
+real coupling explicitly; an integration sequence also needs a module owner.
 For updates and scoped audits, apply
 [Module-bounded review](references/change-and-handoff.md#module-bounded-review):
 review changed internals and consumed public contracts, then expand to consumers
@@ -232,6 +275,21 @@ PIP. It is not a readiness score, acceptance gate, or reason to add machinery.
 Use the lowest level that safely fits actual users, interactions, recovery,
 risk, and credible load. A low DCL never weakens authorization, security,
 privacy, money safety, data integrity, or destructive-operation protections.
+
+**Build for required outcomes, not implementation or data perfection.**
+Byte-identical results are usually not a product requirement, especially at
+lower DCLs and in early-stage products. Prefer semantic correctness and the
+smallest useful verification over reproducing incidental serialization,
+generated bytes, internal representations, or every historical implementation
+detail. Do not let speculative determinism, exhaustive equivalence checks, or
+unnecessary reconciliation machinery delay a working early product.
+Data integrity means preserving the actual required identities, values,
+relationships, and effects—not making every representation byte-for-byte equal.
+Require exact bytes only for a concrete contract or correctness dependency;
+keep that requirement narrow. Do not silently relax an explicit PIP requirement
+or a security, money, or destructive-operation safeguard. Apply
+[Outcome-focused correctness](references/development-complexity.md#outcome-focused-correctness-not-byte-identity)
+when choosing implementation and verification scope, even when DCL is omitted.
 
 DCL never requires automatic handling of every edge case. When the PIP does not
 already resolve a rare or complex case, ask the product manager, originator, or
@@ -344,8 +402,8 @@ Record database mechanics only when they are product-significant:
   avoidable contention.
 - When several processes or coordination mechanisms make contention hard to
   understand, add a coordination overlay to `architecture/stack-context.md`.
-  It shows the contenders, narrow scope, mechanism, storage or owner, expiry or
-  fencing when applicable, and protected resource. Keep one straightforward
+  It maps contenders and protected resources to module-owned mechanisms without
+  defining expiry, fencing, or other rules outside those modules. Keep one straightforward
   lock or lease in its sequence and, for persisted lease fields, its ERD. Split
   the overlay into `architecture/coordination.md` only when stack context would
   otherwise become unreadable.
@@ -402,10 +460,11 @@ behavior with a human product authority rather than inferring it from DCL.
 3. Express observable outcomes in the owning diagrams. Keep `product.yaml`
    minimal; add textual acceptance only for unique non-diagrammable cases under
    the exception above, never as another version of diagrammed behavior.
-4. Draft the physical stack context and user-visible flows. Add state, data,
+4. Draft the root physical stack context and module-owned user-visible flows. Add state, data,
    sequence, rule, contract, journey, screen, quality, or deployment detail only
-   when it resolves a real ambiguity. Move behavioral logic from prose into its
-   owning diagram, including refusal and failure paths, without changing intent.
+   when it resolves a real ambiguity; all logic and constraints stay inside
+   modules. Move behavioral logic from prose into its owning diagram, including
+   refusal and failure paths, without changing intent.
 5. Add concise current rationale to each owning diagram file. Link related
    records directly instead of copying their content.
 6. Use an isolated PIP fork for an unadopted alternative. Keep reconstruction

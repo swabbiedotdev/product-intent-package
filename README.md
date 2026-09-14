@@ -19,7 +19,7 @@ The Product Intent skill contains:
 
 - `SKILL.md`, the concise entrypoint;
 - `references/`, guidance loaded only when relevant;
-- `assets/product-intent-template/`, the three-file default package;
+- `assets/product-intent-template/`, the three-file module-first starter;
 - `assets/acceptance-template.yaml`, exceptional non-diagrammable acceptance;
 - `assets/governance-template.yaml`, optional current editing authority;
 - `assets/example-product-intent-package/`, a proportional worked example; and
@@ -49,23 +49,34 @@ Audits may use tickets to locate the requested scope and evidence, but audit
 expected behavior and conformance against the canonical PIP—not ticket prose,
 status, or checklists.
 
-The default package has three files:
+All product logic belongs to named modules. The smallest starter has three files:
 
 ```text
 product.yaml
 architecture/stack-context.md
-experience/user-flows.md
+modules/primary-capability/experience/user-flows.md
 ```
 
 Keep `product.yaml` minimal: product context and direct links, not rules, gates,
 or scenario lists. Diagrams own behavior and observable outcomes. Omit
 `acceptance.yaml` unless a unique case cannot be meaningfully diagrammed;
 explain why, link its owner, and retain only that irreducible case. The same
-restriction applies to inline acceptance. Complexity or convenience is not an
+restriction applies to inline acceptance; any qualifying case stays with its
+module owner, not in the root product record. Complexity or convenience is not an
 exception, and diagrammed behavior must not be copied into either file.
 
-Larger PIPs may group capability-owned logic into optional modules with public
-behavioral boundaries, internal diagrams, and thin cross-module workflows.
+Modules are required at every product size; rename `primary-capability` to the
+actual capability and subdivide only when responsibilities justify it. All
+behavior, workflows, shared infrastructure, data rules, quality constraints,
+and interaction rules belong inside modules with explicit public boundaries.
+Cross-module workflows belong to their responsible domain or orchestration
+module, not a parallel root workflow layer. Root files provide product context,
+physical topology, optional editing authority, and navigation without defining
+independent logic. Small modules do not need a boilerplate bundle of files.
+Strongly prefer organizing overall documents such as stack context by the same
+modules, so readers can follow one module through its context and dependencies.
+Keep shared infrastructure physically accurate and link owners rather than
+duplicating their logic.
 The [module standard](skills/product-intent-manager/references/product-intent-package-standard.md#capability-modules)
 and [bounded review procedure](skills/product-intent-manager/references/change-and-handoff.md#module-bounded-review)
 define where a review can stop and when shared state or changed guarantees
@@ -112,6 +123,10 @@ choices. The rationale explains all active causes, constraints, and material
 tradeoffs for the present design; it does not retell product history.
 
 Diagrams are the default home for product logic, not illustrations of prose.
+Every rule must also be part of a documented process or explicitly invoked by
+one, with inputs and result handling shown. A standalone diagram or module
+owner is not enough; see
+[process-connected logic](skills/product-intent-manager/references/product-intent-package-standard.md#process-connected-logic-no-orphan-rules).
 Rules, gates, permissions, conditions, calculations, and recovery belong in
 rendered branches, guards, transitions, and attached notes. Shared rule logic
 uses a linked decision diagram; prose supplies context and rationale, not a
