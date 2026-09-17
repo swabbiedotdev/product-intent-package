@@ -351,6 +351,39 @@ module-bounded review rule where boundaries exist; otherwise follow direct
 links and obvious semantic dependents needed to judge that scope. Do not turn
 ticket acceptance or completion status into the audit target.
 
+## Declare the end state; derive the changes
+
+A product is maintained from an explicitly declared end state, not from a
+sequence of changes. The PIP declares intended product state. The repository
+declares the implemented target state in declarative source files. Migrations,
+patches, and apply plans are derived from the difference between that declared
+target and the current state. A history of change files alone does not define
+the product, and it is not an adequate owner for review, audit, or later change.
+
+This rule applies to SQL schemas and migrations:
+
+- Write the target SQL schema directly in declarative schema files in the
+  repository, for example `supabase/schemas/*.sql`: tables, columns, types,
+  constraints, indexes, views, functions, triggers, policies, and grants.
+- Change the declared schema first. Generate each migration from the diff
+  between the declared schema and the current migration state, for example
+  `supabase db diff -f <name>`, then review the generated file.
+- Do not write a migration file directly unless the project explicitly defines
+  the target schema that the migration moves toward. If the project has only
+  migrations, stop and propose a declared schema, for example one generated
+  from the current database, before authoring schema changes.
+- Hand-edit a generated migration only for what a diff cannot express, such as
+  data movement or a rename that the diff shows as drop-and-create. The declared
+  schema still defines the result. Review generated drops for data loss.
+- Keep the declared schema consistent with the PIP data models. The PIP names
+  the product-significant subset; the schema files hold the complete physical
+  definition.
+
+Apply the same rule to other stateful surfaces with a declarative option:
+infrastructure, deployment configuration, access policies, document-store
+indexes and rules, and external API schemas. The PIP never contains the
+generated changes or one-time migration steps.
+
 ## Data access and concurrency
 
 Record database mechanics only when they are product-significant:

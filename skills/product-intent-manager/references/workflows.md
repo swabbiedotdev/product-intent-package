@@ -167,9 +167,13 @@ a PIP:
    affected code, and relevant PIP links. Derive audit criteria from the
    canonical PIP owners, not from ticket wording, checklists, or status. Follow
    direct links and obvious semantic dependents needed to judge that scope.
-4. Treat code, migrations, tests, tickets, logs, and runtime behavior as
-   implementation evidence. They do not change product intent. A ticket may
-   narrow execution scope but cannot revise the PIP.
+4. Treat code, declared schemas, migrations, tests, tickets, logs, and runtime
+   behavior as implementation evidence. They do not change product intent. A
+   ticket may narrow execution scope but cannot revise the PIP. Compare the
+   declared schema, not the migration history, with the PIP data models. Change
+   schemas and other declarative state first and generate migrations from the
+   diff; see
+   [Declare the end state; derive the changes](../SKILL.md#declare-the-end-state-derive-the-changes).
 5. Compare planned or observed product-significant behavior, schema, policy,
    queries, and design with the task-start PIP and any later direct instruction
    from a verified authority whose scope covers the complete change.

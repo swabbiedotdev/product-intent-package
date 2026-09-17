@@ -390,6 +390,16 @@ cases:
       - preserve standing deployment and maintenance rules because they remain applicable after any one execution
       - distinguish ongoing intent from one-time work by whether completion makes the instruction obsolete, not by imperative wording or action order
 
+  - id: declared-schema-before-migration
+    prompt: Implement the PIP's new unique index on member emails. The Supabase project has a supabase/migrations folder but no supabase/schemas folder. Just write a new migration file that adds the index.
+    should_activate: true
+    must:
+      - state that the product end state must be declared in the repository, not only as a sequence of migrations
+      - do not hand-write the migration while no declared target schema exists
+      - propose a declared schema such as supabase/schemas generated from the current database, then add the index there
+      - generate the migration from the schema diff and review it for destructive drops
+      - keep generated migrations and one-time steps out of the PIP
+
   - id: negative-ordinary-coding
     prompt: Refactor this utility module without changing behavior.
     should_activate: false

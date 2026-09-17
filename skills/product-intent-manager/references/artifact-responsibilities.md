@@ -509,8 +509,8 @@ not use two badges merely because one direct key also appears in `WHERE`.
 An index may support an owning product rule; its predicate cannot establish the
 rule by itself. Define the meaning, affected population, owner, update
 lifecycle, and consumers of any product classification before encoding it in a
-partial index or constraint. Inspect current schema, migrations, and owning
-queries before naming a physical index. Omit routine primary-key and ordinary
+partial index or constraint. Inspect the declared schema, migrations, and
+owning queries before naming a physical index. Omit routine primary-key and ordinary
 implementation indexes unless their behavior is independently product-
 significant. Ordinarily, show a primary-key column as `PK` in the entity and do
 not give its automatically created index a `U*` badge or `INDEXES` entry. Add

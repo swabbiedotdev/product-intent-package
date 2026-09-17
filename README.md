@@ -40,6 +40,12 @@ in external implementation notes. Describing intent does not claim it is built.
 Use the team's existing task manager alongside the PIP; the PIP does not define
 task management or prescribe a delivery workflow.
 
+The end state must also be declared in the repository, not only as a history of
+changes. Write SQL schemas as declarative files (for example `supabase/schemas/`)
+and generate migrations from schema diffs; do not hand-write a migration without
+an explicitly defined target schema. The same rule applies to other declarable
+state such as infrastructure, policies, and index configuration.
+
 Implementation tickets in Linear, Notion, ClickUp, GitHub, or another task
 system link to the applicable PIP release, revision, and records rather than
 restating product behavior or acceptance. Tickets contain implementation scope,
