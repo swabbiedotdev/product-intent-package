@@ -62,8 +62,11 @@ retry, fencing, release, and recovery order.
 Keep diagrams with the same responsibility consolidated until readability or
 coherent module ownership requires focused files. Use stable IDs when referenced
 and a simple linked table of contents when navigation needs it, not a registry
-or trace graph. Module-local folders group different artifact types by responsibility; see
-[Capability modules](product-intent-package-standard.md#capability-modules).
+or trace graph. A module folder holds flat, topic-named `data-*`,
+`experience-*`, and `logic-*` files; see
+[Module file layout](product-intent-package-standard.md#module-file-layout).
+A file with five or more records opens with a `### Map`; see
+[Diagram Presentation](diagram-presentation.md#overview-first-then-lettered-detail).
 Public boundary diagrams own exported promises, internal diagrams own their
 realization, and cross-module sequences own composition and shared invariants.
 This is required ownership, not another mandatory diagram type. Public
@@ -130,6 +133,20 @@ application point, input sources, and the effect of its result in the consuming
 diagram. Trace nested calls to an actual process trigger; a cycle of otherwise
 unused helpers is not integration. See
 [Process-connected logic](product-intent-package-standard.md#process-connected-logic-no-orphan-rules).
+### Cross-cutting checks
+
+A check that many features call, such as an access or permission check, is
+clearer with three owners than with one central decision diagram:
+
+- The check itself, with each ordered test and each named refusal, belongs in
+  the sequence of the function that runs it.
+- Which feature action requires which level belongs in that feature's own
+  sequence, at the step where it calls the check. A central list of
+  action-to-level mappings goes stale as features change.
+- What the person sees for each refusal belongs in the user flow.
+
+Access levels or flags that combine, rather than succeed one another, are not a
+lifecycle; do not model them as a state machine.
 
 ## User flows
 
@@ -158,6 +175,17 @@ Put the actions and visible states owned by that surface inside it and label
 transitions between surfaces. This inventory tells designers which pages,
 views, dialogs, panels, components, or messages need mockups. It is not a
 wireframe, and not every flow node needs a separate mockup.
+
+State which surfaces exist and their actions, states, gates, navigation,
+outcomes, and exact user-visible copy. Do not describe layout or visual form in
+the PIP: placement (header, sidebar, “under X,” on-screen order), visual form
+(pill, chip, card, colors, icons, sizes), or arrangement (columns, grids)
+belongs to the linked mockups. Layout prose drifts from the real designs and
+buries the logic. Keep design detail that drives behavior, such as a swipe
+action, scroll-to-load, a minimum size that makes a control tappable, or a
+visibility threshold that counts a view. Translate a visual cue that carries
+meaning into the state it signals: “purple dot” becomes “marked unread,” and
+red or amber becomes high or low severity.
 
 Place the exact current mockup frame or node, version or branch, and companion
 example or export-code reference next to the affected surface. That mockup is
@@ -354,7 +382,8 @@ required logic. Do not add a state machine that merely repeats those sequences.
 
 When needed, a state machine owns stable lifecycle states, triggers, guards, permitted and
 forbidden transitions, and durable or product-significant failure and recovery
-states. It is the high-level map of how the processes represented by sequences
+states. Use one only for a real lifecycle; combinable levels, roles, or flags
+belong in rules and the sequences that check them. It is the high-level map of how the processes represented by sequences
 interact.
 
 Name the triggering process and link a consequential transition to its `SEQ-*`
@@ -402,6 +431,13 @@ behavior that itself matters to the product. Show its product-significant null,
 key, uniqueness, range, enumeration, retention, or other constraint when
 applicable. Do not replace several such fields with an invented summary row
 such as `fitness_controls SMALLINT × 5`; show the five physical columns.
+
+Keep the data shape lean. Ask of every table and copied or derived column
+whether a read or write path the product actually uses depends on it; remove
+copies nothing reads. When two concepts are modeled differently, confirm that
+the difference is real product meaning. Unifying concepts that differ only by
+origin, such as two kinds of item variant distinguished only by where they were
+sourced, often removes parallel tables and special cases.
 
 Omit incidental implementation-only columns that do not change product meaning.
 An entity repeated only to provide context in another diagram may use a clearly

@@ -237,3 +237,20 @@ For a format-6 or similarly heavy package:
 
 Do not chase parity with the old file count. A representation-only migration
 must not silently change product meaning.
+
+## Restructure a large package
+
+For a package-wide change such as moving to the
+[module layout](product-intent-package-standard.md#module-layout-for-large-packages),
+splitting records into
+[overview and lettered detail](diagram-presentation.md#overview-first-then-lettered-detail),
+renumbering IDs, or restyling diagrams:
+
+1. Write an exact specification of the target pattern.
+2. Pilot it on one module and review the result with the product authority.
+3. Fan out to parallel agents with a shared brief and the reviewed pilot as the
+   example.
+4. Rewrite links mechanically whenever a file or heading moves.
+5. Run the repository checks in
+   [PIP Use and Alignment Checks](change-and-handoff.md#4-consistency-format-and-implementation-alignment),
+   including the nothing-lost comparison, before accepting the change.

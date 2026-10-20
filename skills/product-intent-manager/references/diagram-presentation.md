@@ -11,32 +11,94 @@ the meaning and selection rules.
 ## Recommended dark-mode style
 
 Default to dark-mode diagram styling unless the project requests another theme.
-Use a near-black canvas, dark navy or charcoal panels, light text, and visible
-but restrained borders. A useful starting palette is:
+Pick one exact palette and apply it to every diagram rather than relying on a
+general instruction to use dark mode. Give overview diagrams and detail
+diagrams distinct box colors so a reader can tell the zoom level at a glance.
+This palette has held up across a package of several hundred diagrams:
 
 | Element | Color |
 | --- | --- |
-| Canvas | `#101213` |
-| ERD rows | `#111827` |
-| Entity heading / section heading | `#263544` / `#1f2c38` |
-| Primary text / secondary text | `#e5edf5` / `#b8c4d0` |
-| Outer borders / row separators | `#8ea0b3` / `#344556` |
-| Sequence notes | `#242626` with light text |
-| Sequence arrows / lifelines and branch outlines | light gray / muted blue |
+| Canvas and edge-label background | `#121314` |
+| All text | `#EFE7D2` |
+| Overview diagrams: box fill / borders and arrows | `#3B301E` / `#B69A61` |
+| Detail diagrams, including ERD rows and sequence notes: box fill / borders and arrows | `#0E1B33` / `#536F98` |
 | Index badge accents: I / U / P | `#6ea8ff` / `#6fd38a` / `#c58aff` |
 
-For ERDs, use tinted badge fills with brighter outlines and light labels. For
-sequences, keep action text and arrows clear against the canvas, use subdued
-note panels, and distinguish branch frames without overwhelming the messages.
-Keep text labels alongside every color distinction.
+Keep semantic legend colors, such as index badges, as they are. Keep text labels
+alongside every color distinction.
 
-Start Mermaid with `config.theme: dark`; style custom HTML table cells and
-badges explicitly because they may not inherit the Mermaid theme. Check text,
-arrowheads, edge labels, notes, and exports against the actual background.
-Adaptive light/dark styles are acceptable if their dark appearance remains
-consistent; avoid a mixture of bright default panels and dark custom tables.
+Start every Mermaid block with `theme: base` and explicit `themeVariables`
+rather than `theme: dark`, so each diagram type renders the same colors. A
+detail-diagram configuration:
+
+```yaml
+config:
+  theme: base
+  themeVariables:
+    background: "#121314"
+    primaryColor: "#0E1B33"
+    primaryBorderColor: "#536F98"
+    primaryTextColor: "#EFE7D2"
+    textColor: "#EFE7D2"
+    lineColor: "#536F98"
+    edgeLabelBackground: "#121314"
+    actorBkg: "#0E1B33"
+    actorBorder: "#536F98"
+    actorTextColor: "#EFE7D2"
+    signalColor: "#536F98"
+    signalTextColor: "#EFE7D2"
+    noteBkgColor: "#0E1B33"
+    noteBorderColor: "#536F98"
+    noteTextColor: "#EFE7D2"
+```
+
+An overview diagram uses the same block with the brass fill and line colors.
+Style custom HTML table cells and badges explicitly because they may not inherit
+the Mermaid theme. Check text, arrowheads, edge labels, notes, and exports
+against the actual background.
+
+Do not set a custom `fontFamily`. When the named font is missing from a viewer,
+Mermaid sizes boxes for one font and draws them in another, clipping labels; the
+default font renders correctly.
+
+A bulk recolor must change only styling. A color named inside product content,
+such as an image placed on a dark `#222222` square, is product intent and must
+never be touched. Separate configuration and `classDef` styling from labels
+before replacing colors.
+
 This preference governs documentation diagrams, not the product application's
 UI theme.
+
+## Overview first, then lettered detail
+
+A large record is easier to read as an overview followed by zoomed-in parts.
+Keep a small record as one diagram.
+
+- Open the record with `### <ID> overview`: a diagram of 4–10 boxes, or a few
+  summary messages for a sequence, in the overview palette. Put intro lines such
+  as the runtime, the owning `FLOW-*`, and the DCL line above it.
+- Give each part of the overview a lettered ID (`SEQ-014a`, `SEQ-014b`, …) and
+  follow with one detail diagram per part under `### SEQ-014a <name>`, in the
+  detail palette.
+- Mark each boundary between parts with a short stub node or note, such as
+  `→ SEQ-014b Publish`.
+- When an `alt` block spans two parts, keep the `else` line in the earlier part
+  with a stub note and move the branch body into the next part. Never reword a
+  branch condition while splitting.
+- Data files follow the same pattern: an entity-only overview ERD, then the
+  detailed table diagrams as lettered parts.
+- A file with five or more records opens with a `### Map` that has one box per
+  record and edges only for real relations between them.
+- Place `### Current rationale` after the record's last detail diagram.
+
+Make overviews per record, not per file. A file-level overview whose parts are
+lettered versions of the file would renumber every record and every external
+reference to it, including code comments.
+
+When splitting existing diagrams, lose nothing: every line of the old detail
+diagram must appear in exactly one lettered part. For a package-wide split,
+compare the committed diagrams with the new ones mechanically and list any
+missing lines before accepting the change.
 
 ## Custom table-shaped ERDs
 
@@ -168,7 +230,13 @@ Choose only relevant note labels:
 ```mermaid
 ---
 config:
-  theme: dark
+  theme: base
+  themeVariables:
+    background: "#121314"
+    primaryColor: "#0E1B33"
+    primaryBorderColor: "#536F98"
+    primaryTextColor: "#EFE7D2"
+    lineColor: "#536F98"
   sequence:
     noteAlign: left
     noteFontSize: 14

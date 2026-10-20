@@ -30,6 +30,12 @@ For a material product-intent change:
    team's normal Git process. Do not create a per-change signoff or approval
    record; Git owns commit history.
 
+When a review produces several findings that need product decisions, put them
+to the product authority one at a time, each with a recommended option. Keep the
+decisions in a short working list outside the PIP, apply them to the PIP and
+code together in one pass, then re-check the affected functions. Take seriously
+a question about why two concepts differ; it often reveals a simpler model.
+
 Preserve a stable cross-file ID when meaning is unchanged. Do not maintain a
 global dependency graph, per-artifact version counter, package hash, change log,
 or product history inside the PIP.
@@ -104,6 +110,11 @@ DCL to the PIP. If the implementation is wrong, fix it toward the PIP. If the
 team wants different product intent, create a coherent PIP fork and route that
 product change separately. Report ticket-to-PIP drift separately from
 implementation-to-PIP drift so neither is mistaken for product authority.
+
+When several clients implement the same PIP, such as web and mobile apps,
+audit them against the PIP and against each other periodically. Divergences
+accumulate quietly between clients. Resolve each one through the
+[one end state rule](product-intent-package-standard.md#one-end-state-for-every-client).
 
 Apply the semantic-expansion boundary in
 [Authority and Evidence](authority-and-evidence.md#semantic-expansion-boundary)
@@ -389,9 +400,31 @@ only material differences. Use a ticket to guide audit scope, never as the
 expected product. Do not persist that result in the package, and do not change
 the PIP to make a divergent ticket or implementation appear compliant.
 
-Use existing tools and proportional manual checks. A missing renderer should be
-reported, not solved by adding Python, a package hash, snapshot tests, a new
-dependency, or a full-package validator.
+Use existing tools and proportional manual checks for ordinary edits. A missing
+renderer should be reported, not solved by adding a package hash, snapshot
+tests, or a readiness gate.
+
+A large package, or a package-wide restructure, outgrows manual checking. Keep
+small checker scripts in the repository, outside the PIP, and run them after
+each large edit:
+
+- Mermaid parse check over every block in every changed file, for example
+  `mermaid.parse` under jsdom;
+- link and anchor check: every relative link resolves to a file and every
+  anchor matches a heading slug;
+- unique-ID check: no record number is shared between diagrams apart from part
+  letters;
+- nothing-lost check for structural refactors: compare old and new diagram
+  lines and list any that disappeared; and
+- history-wording search, reviewed by a person, for phrases such as “no
+  longer,” “previously,” and “replaces.”
+
+These are tools for editing the PIP. They never become PIP content, statuses,
+or readiness gates.
+
+For a package-wide change made by several agents, pilot first: apply the change
+to one module, review its pattern, then fan out with a shared brief and an
+exact specification.
 
 ## Report
 

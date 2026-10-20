@@ -109,6 +109,11 @@ when they add distinct product meaning. Format 7 does not require an artifact
 index, coverage matrix, central traceability graph, change log, journey
 registry, readiness ledger, or a formal not-applicable decision.
 
+A package that grows into several product modules uses flat module folders of
+topic-named `data-*`, `experience-*`, and `logic-*` files instead of
+artifact-type folders. Large records open with a small overview diagram followed
+by lettered detail parts, and each record keeps its own ID number.
+
 An optional `dcl` mapping in `product.yaml` states the product-wide Development
 Complexity Level. It applies everywhere unless a narrow owner has a justified
 `dcl_override`. Sequence diagrams should show whether they use the product
@@ -145,7 +150,8 @@ The five diagram responsibilities remain distinct:
 - stack context: physical systems, responsibility, state ownership, deployment,
   and connections;
 - user flow: actor actions, user-visible surfaces, visible outcomes, and
-  recovery—the inventory of what needs mockups;
+  recovery—the inventory of what needs mockups, without the layout or visual
+  form the mockups own;
 - optional state machine: valid lifecycle states and high-level process interaction
   when a separate view adds needed information;
 - data model/ERD: concepts, persisted records, relationships, and product-

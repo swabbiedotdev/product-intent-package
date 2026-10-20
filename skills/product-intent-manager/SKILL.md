@@ -75,9 +75,11 @@ Keep these boundaries clear from the start:
   self-loops that do not change a stable lifecycle state.
 - **User flows show the user experience and mockup inventory:** actor actions,
   clearly bounded user-visible surfaces and states, navigation, visible failure
-  and recovery, and outcomes. They intentionally omit internal system logic. A
-  binding design target identifies the exact frame, node, branch, version, or
-  local mockup; a link to an entire design file is context only.
+  and recovery, outcomes, and exact user-visible copy. They intentionally omit
+  internal system logic and layout or visual form (placement, pills, cards,
+  colors, columns), which the linked mockups own, except design that drives
+  behavior. A binding design target identifies the exact frame, node, branch,
+  version, or local mockup; a link to an entire design file is context only.
 - **Decision diagrams hold shared rule logic:** exact conditions, priority,
   calculations, and allowed/refused outcomes that need a reusable owner. Put a
   process-local gate directly in its sequence instead of creating another file.
@@ -91,9 +93,10 @@ multiple processes does not by itself require one; do not add a duplicate view.
 Missing sequence-level detail in a state machine or user flow is correct. Link
 to the owning sequence instead of copying its internals into those views.
 
-Recommend a dark-mode style for PIP diagrams: dark backgrounds, light readable
-text, subdued panels, and contrasting lines and badges. Apply it consistently
-to ERDs and sequence diagrams unless the project requests another theme.
+Recommend one exact dark-mode palette for PIP diagrams, set through
+`theme: base` and explicit `themeVariables`, with distinct overview and detail
+box colors and no custom font. Apply it consistently unless the project
+requests another theme.
 For ERDs with product-significant indexes or persisted coordination, use custom
 Mermaid `flowchart` table nodes: physical attribute, type, key/rule, and badge
 columns, with `INDEXES` and applicable `COORDINATION` compartments inside each
@@ -112,6 +115,8 @@ both-end cardinality, consistency owners, and lifecycle semantics; indexes are
 access paths, not evidence of relationships or referential integrity.
 For sequences, prefer numbered action arrows and adjacent, left-aligned notes
 for consequential execution details; read Diagram Presentation before authoring.
+Open a large record with a small overview diagram and follow it with lettered
+detail parts (`SEQ-014a`, `SEQ-014b`).
 
 ## The canonical PIP is current intent
 
@@ -129,7 +134,13 @@ narration in the PIP; those belong only in external tasks or notes.
 This applies to diagram labels, supporting notes, and acceptance too. Detailed
 runtime logic and required components or code owners still belong in the PIP;
 construction instructions do not. Present-tense intent is not a claim that the
-implementation already matches it.
+implementation already matches it: the PIP may lead the code. Give data-transfer
+and cutover detail its own implementation document in the repository, outside
+the PIP, and keep internal rebuild labels such as “v7” out of the PIP.
+
+When a product has several clients, such as web and mobile, the PIP states one
+behavior for all of them; a platform difference appears only where the PIP
+names it on purpose.
 
 Standing action rules are valid PIP content, including product-significant
 maintenance, deployment, and recovery instructions. Ask: “After this action is
@@ -204,7 +215,9 @@ are not reasons to put logic in either file. Split or extend diagrams instead.
 Before adding a line, ask: “Is this necessary product context, or genuinely
 non-diagrammable acceptance?” If neither, put it in the owning diagram or omit
 it as duplication. Preserve existing meaning when moving it; never just delete
-a requirement because its current placement is wrong. Read the
+a requirement because its current placement is wrong. Organize each module
+folder as flat, topic-named `data-*`, `experience-*`, and `logic-*` files
+rather than artifact-type subfolders. Read the
 [Package Standard](references/product-intent-package-standard.md) before
 creating or migrating package structure and
 [Artifact Responsibilities](references/artifact-responsibilities.md) before
@@ -218,7 +231,8 @@ owning artifacts and link them when context is necessary.
 
 Use one owner for each fact and direct links where another artifact needs
 context. Assign a stable ID only when another file or external system refers to
-the item. Do not create artifact indexes, traceability graphs, coverage
+the item, and give each record its own number; lowercase letters mark only the
+parts of one record. Do not create artifact indexes, traceability graphs, coverage
 matrices, change logs, readiness ledgers, or placeholder files.
 
 ## Modular PIPs and bounded review
@@ -531,8 +545,11 @@ authority boundaries, read
   history inside the PIP.
 - Keep task state and implementation notes outside the package.
 - Check changed YAML, direct links, Mermaid output, and whitespace in
-  proportion to the change. Do not add a validator, package hash, snapshot
-  suite, or readiness gate for ordinary documentation work.
+  proportion to the change. Do not add a package hash, snapshot suite, or
+  readiness gate. For a large package or package-wide restructure, run
+  repository checker scripts (Mermaid parse, link and anchor, unique ID,
+  nothing lost) and pilot one module before fanning out; see
+  [PIP Use and Alignment Checks](references/change-and-handoff.md#4-consistency-format-and-implementation-alignment).
 - This skill does not itself authorize product implementation, external writes,
   task mutations, commits, or pushes.
 

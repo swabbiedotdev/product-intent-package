@@ -414,6 +414,35 @@ cases:
       - propose a declared schema such as supabase/schemas generated from the current database, then add the index there
       - generate the migration from the schema diff and review it for destructive drops
       - keep generated migrations and one-time steps out of the PIP
+  - id: restructure-large-package
+    prompt: Our PIP has 15 modules split into data/, sequences/, behavior/, contracts/, and quality/ folders, and its long sequences are hard to read. Restructure the whole package with parallel agents.
+    should_activate: true
+    must:
+      - move to flat module folders of topic-named data-*, experience-*, and logic-* files
+      - keep RULE records, contracts, and measured targets in the logic file whose sequences use them
+      - open large records with a small overview and lettered detail parts while keeping small records as one diagram
+      - lose no diagram line, and compare old and new diagram lines mechanically
+      - give each record its own number and treat heading renames as link migrations with anchor checks
+      - pilot one module and review it before fanning out with a shared brief and exact specification
+      - keep checker scripts and the migration plan outside the PIP
+
+  - id: no-layout-in-user-flows
+    prompt: Update the inbox user flow. It says the unread count sits in a purple pill in the header, threads appear in a two-column grid, and swiping left archives a thread.
+    should_activate: true
+    must:
+      - remove placement, visual form, and arrangement because linked mockups own them
+      - restate a meaningful visual cue as the state it signals, such as marked unread
+      - keep design that drives behavior, such as the swipe-to-archive action
+      - keep surfaces, actions, states, navigation, outcomes, and exact user-visible copy
+
+  - id: one-end-state-across-clients
+    prompt: An audit found the web and mobile apps handle draft saving and checkout differently. Update the PIP.
+    should_activate: true
+    must:
+      - resolve each divergence with the product authority one at a time with a recommended option
+      - record one behavior for every client in the PIP
+      - keep a platform difference only where the PIP names it on purpose, such as a store-mandated purchase path
+      - keep audit findings and the decision list outside the PIP
 
   - id: negative-ordinary-coding
     prompt: Refactor this utility module without changing behavior.

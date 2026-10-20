@@ -359,6 +359,20 @@ or working notes outside the PIP. Keep ordinary history in Git. Do not merely
 change “will add” to “adds”: rewrite the sentence around the resulting behavior
 or constraint.
 
+The PIP may lead the code: it can describe an end state the current schema and
+implementation do not match yet. When reaching it requires moving data or
+cutting over from an older system, give that detail an explicit home in a
+repository implementation document outside the PIP, such as a transfer or
+migration note. Record-identity survival on merge, URL rewrite maps, source
+priority for derived data, and cutover order belong there, so the detail is
+kept without entering canonical intent.
+
+Do not name internal rebuild or generation labels such as “v6” or “v7” in the
+PIP; they describe history, not the product. After a large edit, search for
+history wording such as “no longer,” “previously,” “replaces,” “instead of the
+old,” and “now” and have a person review each hit, because some matches are
+legitimate present-tense product copy.
+
 Do not remove technical design meaning to achieve this. Required components,
 function ownership, input provenance, detailed runtime steps, retries, data
 rules, and compatibility constraints remain in their owning artifacts. “A retry
@@ -391,6 +405,15 @@ the complete change adopts the fork, update the affected canonical intent
 together through the normal Git process. A direct, unambiguous authorized
 instruction may update canonical intent without a separate signature, approval,
 or signoff record.
+
+### One end state for every client
+
+When a product ships several clients, such as web and mobile apps, the PIP
+states one behavior for all of them. A platform difference appears only where
+the PIP names it on purpose, for example a store-mandated purchase path on one
+platform and a card processor on another. When clients diverge from each other,
+resolve each difference with the product authority one at a time, record the
+single chosen behavior in the PIP, and align every client to it.
 
 ## Product record
 
@@ -489,6 +512,10 @@ history. Remove rationale that no longer explains the current state. Keep a
 reason in the diagram file that owns the choice rather than copying it into a
 decision log or several diagrams.
 
+In a file with several records, place a `### Current rationale` heading after
+the last diagram of the record it explains. A bullet list of causal reasons
+usually reads better than one paragraph.
+
 ## Development Complexity Level
 
 DCL is optional target shorthand, not package status, maturity, acceptance, or
@@ -565,6 +592,21 @@ Common prefixes include `ACTOR`, `CAP`, `JOURNEY`, `FLOW`, `SCREEN`, `RULE`,
 `SM`, `DATA`, `ARCH`, `API`, `EVT`, `SEQ`, `COORD`, `QC`, and `ACC`. A prefix
 does not make its artifact type mandatory.
 
+Give each record its own number. Lowercase letters (`SEQ-014a`, `SEQ-014b`)
+identify only the parts of one record split into an overview and detail
+diagrams; see
+[Diagram Presentation](diagram-presentation.md#overview-first-then-lettered-detail).
+Do not create sibling records such as `SEQ-043A` or `SEQ-103B`: they are easily
+confused with part letters and their heading anchors can collide. Give them
+their own numbers. A section that only points to records owned elsewhere uses a
+plain title, such as “Media retention (catalog tables),” rather than reusing the
+owner's ID in its heading. Reuse an existing ID when a renamed entity keeps the
+same meaning.
+
+Markdown links target heading anchor slugs, so heading text matters as much as
+the ID. Renaming a heading is a link migration: rewrite every affected link and
+check that each anchor still resolves.
+
 ## File formats
 
 - Store structured skill-authored records as YAML in `.yaml` files.
@@ -615,6 +657,11 @@ exception to repository, accessibility, security, or product constraints.
 A whole design-file, project, board, or folder link supplies context but is not
 an exact target; identify the governing frame, node, branch, version, or local
 mockup next to the affected surface.
+
+The mockup, not PIP text, owns layout and visual form. The PIP states which
+surfaces exist and their actions, states, gates, navigation, outcomes, and exact
+user-visible copy. It does not describe placement, visual form, or arrangement;
+see [User flows](artifact-responsibilities.md#user-flows).
 
 Routine indexes, connection-pool design, and database coordination remain with
 engineering unless they affect a stated product outcome, invariant, quality or
