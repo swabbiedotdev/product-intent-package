@@ -17,14 +17,24 @@ and recovery rules. Root topology must not become an independent logic owner.
 
 ## Module: primary-capability
 
-Module owner: [primary capability](../modules/primary-capability/experience/user-flows.md).
+Module owner: [primary capability](../modules/primary-capability/experience-primary-capability.md).
 Show its physical participants, state, and relevant connections here. A module
 heading or diagram group is a reading lens, not a deployment or trust boundary.
 
 ```mermaid
 ---
 config:
-  theme: dark
+  theme: base
+  themeVariables:
+    background: '#121314'
+    primaryColor: '#0E1B33'
+    primaryBorderColor: '#536F98'
+    primaryTextColor: '#EFE7D2'
+    textColor: '#EFE7D2'
+    lineColor: '#536F98'
+    edgeLabelBackground: '#121314'
+    clusterBkg: '#121314'
+    clusterBorder: '#536F98'
 ---
 flowchart LR
   %% Add only the physical participants in the current intended product.

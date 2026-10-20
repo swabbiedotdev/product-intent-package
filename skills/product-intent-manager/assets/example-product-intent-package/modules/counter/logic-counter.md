@@ -1,27 +1,46 @@
-# Sequences
+# Counter logic
+
+Counter's sequences, rule, lifecycle, and quality targets live together so one
+process reads in one file.
 
 ## SEQ-001 Increment once
 
 This diagram owns the increment and replay logic of
-[RULE-001](../behavior/rules.yaml) for
-[DATA-001 and DATA-002](../data/data-model.md) during
-[FLOW-001](../experience/user-flows.md#flow-001-read-and-increment-the-counter).
+[RULE-001](#rule-001-persist-and-present-the-counter-safely) for
+[DATA-001 and DATA-002](data-counter.md) during
+[FLOW-001](experience-counter.md#flow-001-read-and-increment-the-counter).
 
 **DCL:** 4 (product default)
 
 ```mermaid
 ---
 config:
-  theme: dark
+  theme: base
   sequence:
     noteAlign: left
     noteFontSize: 14
-    noteFontFamily: Arial
   themeCSS: |
-    .noteText { font-family: Arial !important; font-size: 14px !important; }
+    .noteText { font-size: 14px !important; }
   themeVariables:
-    noteBkgColor: '#242626'
-    noteTextColor: '#e5edf5'
+    noteBkgColor: '#0E1B33'
+    noteTextColor: '#EFE7D2'
+    background: '#121314'
+    primaryColor: '#0E1B33'
+    primaryBorderColor: '#536F98'
+    primaryTextColor: '#EFE7D2'
+    textColor: '#EFE7D2'
+    lineColor: '#536F98'
+    actorBkg: '#0E1B33'
+    actorBorder: '#536F98'
+    actorTextColor: '#EFE7D2'
+    actorLineColor: '#536F98'
+    signalColor: '#536F98'
+    signalTextColor: '#EFE7D2'
+    noteBorderColor: '#536F98'
+    labelBoxBkgColor: '#0E1B33'
+    labelBoxBorderColor: '#536F98'
+    labelTextColor: '#EFE7D2'
+    loopTextColor: '#EFE7D2'
 ---
 sequenceDiagram
   autonumber
@@ -89,25 +108,41 @@ sequenceDiagram
 
 ## SEQ-002 Load or reconcile progress
 
-This sequence loads [DATA-001](../data/data-model.md) initially and resolves an
+This sequence loads [DATA-001](data-counter.md) initially and resolves an
 unknown [SEQ-001](#seq-001-increment-once) outcome through DATA-002 during
-[FLOW-001](../experience/user-flows.md#flow-001-read-and-increment-the-counter).
+[FLOW-001](experience-counter.md#flow-001-read-and-increment-the-counter).
 
 **DCL:** 4 (product default)
 
 ```mermaid
 ---
 config:
-  theme: dark
+  theme: base
   sequence:
     noteAlign: left
     noteFontSize: 14
-    noteFontFamily: Arial
   themeCSS: |
-    .noteText { font-family: Arial !important; font-size: 14px !important; }
+    .noteText { font-size: 14px !important; }
   themeVariables:
-    noteBkgColor: '#242626'
-    noteTextColor: '#e5edf5'
+    noteBkgColor: '#0E1B33'
+    noteTextColor: '#EFE7D2'
+    background: '#121314'
+    primaryColor: '#0E1B33'
+    primaryBorderColor: '#536F98'
+    primaryTextColor: '#EFE7D2'
+    textColor: '#EFE7D2'
+    lineColor: '#536F98'
+    actorBkg: '#0E1B33'
+    actorBorder: '#536F98'
+    actorTextColor: '#EFE7D2'
+    actorLineColor: '#536F98'
+    signalColor: '#536F98'
+    signalTextColor: '#EFE7D2'
+    noteBorderColor: '#536F98'
+    labelBoxBkgColor: '#0E1B33'
+    labelBoxBorderColor: '#536F98'
+    labelTextColor: '#EFE7D2'
+    loopTextColor: '#EFE7D2'
 ---
 sequenceDiagram
   autonumber
@@ -158,3 +193,60 @@ sequenceDiagram
   `[U1]` receipt.
 - Increment remains unavailable after a read failure because the browser cannot
   safely present or mutate progress it has not reconciled.
+
+## RULE-001 Persist and present the counter safely
+
+`RULE-001` applies to `CAP-001`. Its logic is owned by the steps where it runs:
+the request-key replay check, atomic increment and completion, and receipt
+insert in [SEQ-001](#seq-001-increment-once), and the initial load and
+original-key reconciliation in
+[SEQ-002](#seq-002-load-or-reconcile-progress). The visible results appear in
+[FLOW-001](experience-counter.md#flow-001-read-and-increment-the-counter).
+
+## SM-001 Counter lifecycle
+
+```mermaid
+---
+config:
+  theme: base
+  themeVariables:
+    background: '#121314'
+    primaryColor: '#0E1B33'
+    primaryBorderColor: '#536F98'
+    primaryTextColor: '#EFE7D2'
+    textColor: '#EFE7D2'
+    lineColor: '#536F98'
+    edgeLabelBackground: '#121314'
+    clusterBkg: '#121314'
+    clusterBorder: '#536F98'
+---
+stateDiagram-v2
+  [*] --> Open: Seed below the fixed target
+  Open --> Complete: SEQ-001 commits the increment that reaches the target
+
+  note right of Open
+    Accepted increments below the target remain Open.
+    Their request, replay, and recovery logic belongs to SEQ-001 and SEQ-002.
+  end note
+
+  note right of Complete
+    Complete is terminal because target changes and reset are excluded.
+  end note
+```
+
+### Current rationale
+
+- `Open` and `Complete` are separate durable states because they allow different
+  product actions: Open permits Increment, while Complete does not.
+- Increments below the target are intentionally absent as self-loops because
+  they do not change the stable lifecycle state; `SEQ-001` owns their detailed
+  request, transaction, replay, and failure logic.
+- Completion is terminal because changing or resetting the fixed target is
+  outside this release.
+
+## Quality targets
+
+| ID | Applies to | Measure | Target |
+| --- | --- | --- | --- |
+| `QC-001` | `CAP-001`, [SEQ-001](#seq-001-increment-once) | Accepted increment latency, receipt uniqueness, and persistence consistency under concurrent load | p95 latency is no more than 500 milliseconds at 10 requests per second, with no lost or duplicate accepted increments |
+| `QC-002` | `CAP-001`, [DATA-001 and DATA-002](data-counter.md) | Retention of persisted counter and receipt state across application deployment and rollback | Deployment and rollback do not reset persisted counter or receipt state; backups are maintained for recovery |

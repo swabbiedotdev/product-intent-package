@@ -40,7 +40,17 @@ refusal, and recovery paths here rather than adding them only below the diagram.
 ```mermaid
 ---
 config:
-  theme: dark
+  theme: base
+  themeVariables:
+    background: '#121314'
+    primaryColor: '#0E1B33'
+    primaryBorderColor: '#536F98'
+    primaryTextColor: '#EFE7D2'
+    textColor: '#EFE7D2'
+    lineColor: '#536F98'
+    edgeLabelBackground: '#121314'
+    clusterBkg: '#121314'
+    clusterBorder: '#536F98'
 ---
 flowchart TD
   %% Label the flow with its FLOW-* ID. Use ACTOR-* and SCREEN-* IDs where

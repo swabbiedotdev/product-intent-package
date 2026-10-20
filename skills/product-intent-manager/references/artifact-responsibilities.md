@@ -19,8 +19,8 @@ triggered:
 | Exceptional textual acceptance | A unique case cannot be meaningfully represented in a diagram or attached notes; explain why and link its owner |
 | Editing authority | Agents or contributors need a durable way to verify who may request canonical PIP edits and at what scope |
 | Journey map | Intended phases, recurrence, role changes, or handoffs add context a focused flow cannot show |
-| Screen records | Surface-specific content, actions, validation, responsive behavior, or visible states need detail beyond the flow or linked design |
-| Design records | Repeated visual, content, component, interaction, responsive, or accessibility rules constrain the product |
+| Screen records | Surface-specific copy, actions, validation, behavior that differs by screen size, or visible states need detail beyond the flow; keep them in the owning `experience-*` file and leave layout and visual form to the linked mockup |
+| Design records | Repeated content, interaction, or accessibility rules constrain the product; visual rules stay in the linked authoritative design system |
 | Rule/decision diagram | Conditions, priorities, permissions, or calculations are explicitly consumed by documented processes and need a shared owner beyond a process-local branch |
 | State machine | A higher-level systems view or additional lifecycle information is needed that the sequences do not already convey clearly |
 | Data model / ERD | Entity identity, ownership, relationships, or cardinality affect the product |
@@ -79,7 +79,7 @@ orchestration module.
 | Information | Owner |
 | --- | --- |
 | Minimal release context, outcome, boundary, actors, capabilities, exclusions, measures, default DCL, direct links | `product.yaml`; no logic inventory |
-| Observable success and failure | Owning diagrams; only unique non-diagrammable acceptance may remain inline or in optional `acceptance.yaml` |
+| Observable success and failure | Owning diagrams; only unique non-diagrammable acceptance may remain in an `Acceptance exceptions` section of the owning file |
 | Current reason for a diagrammed design | `Current rationale` in the owning diagram file |
 | Actor action, navigation, visible outcome, visible recovery, surface inventory | User flow |
 | Surface-specific content and actions | Screen or linked design record, when needed |
@@ -280,16 +280,32 @@ show the exact key lookup, join, filter, or mutation fields instead.
 ```mermaid
 ---
 config:
-  theme: dark
+  theme: base
   sequence:
     noteAlign: left
     noteFontSize: 14
-    noteFontFamily: Arial
   themeCSS: |
-    .noteText { font-family: Arial !important; font-size: 14px !important; }
+    .noteText { font-size: 14px !important; }
   themeVariables:
-    noteBkgColor: '#242626'
-    noteTextColor: '#e5edf5'
+    noteBkgColor: '#0E1B33'
+    noteTextColor: '#EFE7D2'
+    background: '#121314'
+    primaryColor: '#0E1B33'
+    primaryBorderColor: '#536F98'
+    primaryTextColor: '#EFE7D2'
+    textColor: '#EFE7D2'
+    lineColor: '#536F98'
+    actorBkg: '#0E1B33'
+    actorBorder: '#536F98'
+    actorTextColor: '#EFE7D2'
+    actorLineColor: '#536F98'
+    signalColor: '#536F98'
+    signalTextColor: '#EFE7D2'
+    noteBorderColor: '#536F98'
+    labelBoxBkgColor: '#0E1B33'
+    labelBoxBorderColor: '#536F98'
+    labelTextColor: '#EFE7D2'
+    loopTextColor: '#EFE7D2'
 ---
 sequenceDiagram
   autonumber
@@ -304,16 +320,32 @@ Without an applicable canonical index:
 ```mermaid
 ---
 config:
-  theme: dark
+  theme: base
   sequence:
     noteAlign: left
     noteFontSize: 14
-    noteFontFamily: Arial
   themeCSS: |
-    .noteText { font-family: Arial !important; font-size: 14px !important; }
+    .noteText { font-size: 14px !important; }
   themeVariables:
-    noteBkgColor: '#242626'
-    noteTextColor: '#e5edf5'
+    noteBkgColor: '#0E1B33'
+    noteTextColor: '#EFE7D2'
+    background: '#121314'
+    primaryColor: '#0E1B33'
+    primaryBorderColor: '#536F98'
+    primaryTextColor: '#EFE7D2'
+    textColor: '#EFE7D2'
+    lineColor: '#536F98'
+    actorBkg: '#0E1B33'
+    actorBorder: '#536F98'
+    actorTextColor: '#EFE7D2'
+    actorLineColor: '#536F98'
+    signalColor: '#536F98'
+    signalTextColor: '#EFE7D2'
+    noteBorderColor: '#536F98'
+    labelBoxBkgColor: '#0E1B33'
+    labelBoxBorderColor: '#536F98'
+    labelTextColor: '#EFE7D2'
+    loopTextColor: '#EFE7D2'
 ---
 sequenceDiagram
   autonumber

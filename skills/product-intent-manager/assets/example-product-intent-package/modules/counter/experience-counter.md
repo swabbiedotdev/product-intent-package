@@ -1,28 +1,34 @@
-# User flows
+# Counter experience
 
 ## FLOW-001 Read and increment the counter
 
 The flow takes place on `SCREEN-001 Counter screen`. Increment actions and
-their retries use [SEQ-001](../sequences/sequences.md#seq-001-increment-once);
+their retries use [SEQ-001](logic-counter.md#seq-001-increment-once);
 loads and reconciliation reads use
-[SEQ-002](../sequences/sequences.md#seq-002-load-or-reconcile-progress).
-Visible outcomes obey [RULE-001](../behavior/rules.yaml).
+[SEQ-002](logic-counter.md#seq-002-load-or-reconcile-progress).
+Visible outcomes obey [RULE-001](logic-counter.md#rule-001-persist-and-present-the-counter-safely).
 
 **Exact local design target:**
-[`SCREEN-001 Counter screen`](mockups/screen-001-counter.md#screen-001-counter-screen)
+[`SCREEN-001 Counter screen`](../../../example-design/screen-001-counter.md#screen-001-counter-screen)
 
 ```mermaid
 ---
 config:
-  theme: dark
+  theme: base
   flowchart:
     nodeSpacing: 70
     rankSpacing: 90
     curve: linear
   themeVariables:
-    clusterBkg: '#18222d'
-    clusterBorder: '#344556'
-    edgeLabelBackground: '#1f2c38'
+    clusterBkg: '#121314'
+    clusterBorder: '#536F98'
+    edgeLabelBackground: '#121314'
+    background: '#121314'
+    primaryColor: '#0E1B33'
+    primaryBorderColor: '#536F98'
+    primaryTextColor: '#EFE7D2'
+    textColor: '#EFE7D2'
+    lineColor: '#536F98'
 ---
 flowchart TD
   START(["ACTOR-001 opens Counter"])
@@ -55,7 +61,7 @@ behavior belong to the linked sequences and `RULE-001`.
 
 ## Current rationale
 
-- One responsive, centered screen is sufficient because the product has one
+- One responsive screen is sufficient because the product has one
   user goal and no secondary navigation or account surfaces. Its exact local
   target is linked above so the surface inventory is not mistaken for layout.
 - Loading, ready, error, submitting, and reconciling remain visibly distinct

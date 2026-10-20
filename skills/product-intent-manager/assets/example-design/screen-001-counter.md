@@ -1,19 +1,26 @@
 # SCREEN-001 Counter screen
 
-This low-fidelity local mockup is the exact content hierarchy and interaction
+This low-fidelity mockup sits outside the PIP and is the exact content hierarchy and interaction
 target for `SCREEN-001` in the example. It deliberately leaves typography,
 color, spacing tokens, and framework choice to implementation.
 
 ```mermaid
 ---
 config:
-  theme: dark
+  theme: base
   flowchart:
     nodeSpacing: 18
     rankSpacing: 18
   themeVariables:
-    clusterBkg: '#18222d'
-    clusterBorder: '#344556'
+    clusterBkg: '#121314'
+    clusterBorder: '#536F98'
+    background: '#121314'
+    primaryColor: '#0E1B33'
+    primaryBorderColor: '#536F98'
+    primaryTextColor: '#EFE7D2'
+    textColor: '#EFE7D2'
+    lineColor: '#536F98'
+    edgeLabelBackground: '#121314'
 ---
 flowchart TB
   subgraph ENTRY["Load and recovery"]
@@ -60,7 +67,7 @@ flowchart TB
 
 Required variants are loading, ready/open, confirmed increment failure, read
 failure, unconfirmed increment with Retry available, incrementing, reconciling,
-and complete. [FLOW-001](../user-flows.md#flow-001-read-and-increment-the-counter)
+and complete. [FLOW-001](../example-product-intent-package/modules/counter/experience-counter.md#flow-001-read-and-increment-the-counter)
 owns transitions; this mockup owns the shared hierarchy and visible controls.
 
 ## Current rationale

@@ -46,11 +46,12 @@ requested scope.
    boundary, actors, capabilities, exclusions, measures, and optional product-
    wide DCL.
 3. Put observable outcomes in their diagrams. Keep `product.yaml` minimal;
-   use `assets/acceptance-template.yaml` only for unique cases that cannot be
-   meaningfully diagrammed, explaining why and keeping the case in its module.
+   use the `assets/acceptance-template.yaml` fields only for unique cases that
+   cannot be meaningfully diagrammed, explaining why and keeping the case in an
+   `Acceptance exceptions` section of its owning module file.
    Do not copy diagrammed behavior.
 4. Draft the physical product boundary in `architecture/stack-context.md` and
-   actor-visible paths inside the owning module's `experience/user-flows.md`.
+   actor-visible paths inside the owning module's `experience-<topic>.md`.
 5. Add state, data, sequence, rule, contract, journey, screen, quality, or
    deployment artifacts only when each adds distinct meaning. Every rule,
    workflow, schema, and constraint belongs inside its responsible module;
@@ -217,8 +218,8 @@ For a format-6 or similarly heavy package:
    Omit governance only when current repository or project guidance already
    makes editing authority unambiguous.
 5. Preserve acceptance meaning in the diagrams before removing redundant YAML.
-   Keep acceptance beside its module owner or in module-local `acceptance.yaml`
-   only for unique cases that cannot be meaningfully diagrammed; explain why.
+   Keep acceptance in an `Acceptance exceptions` section of its owning module
+   file only for unique cases that cannot be meaningfully diagrammed; explain why.
 6. Consolidate context/component/container views into stack context, screen maps
    into module-owned user flows, and conceptual/persisted relationships into
    module-owned data views when those facts remain needed. Assign all shared
@@ -241,7 +242,7 @@ must not silently change product meaning.
 ## Restructure a large package
 
 For a package-wide change such as moving to the
-[module layout](product-intent-package-standard.md#module-layout-for-large-packages),
+[module layout](product-intent-package-standard.md#module-file-layout),
 splitting records into
 [overview and lettered detail](diagram-presentation.md#overview-first-then-lettered-detail),
 renumbering IDs, or restyling diagrams:

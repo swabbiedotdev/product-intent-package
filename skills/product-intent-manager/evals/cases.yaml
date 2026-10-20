@@ -6,7 +6,7 @@ cases:
       - start with root product context and physical architecture plus one named module owning the small product's behavior
       - do not treat small scope as an exemption from module ownership or require unnecessary boundary files and subdivisions
       - keep product.yaml to minimal context and direct links with observable behavior in diagrams
-      - omit acceptance.yaml unless a unique case cannot be meaningfully diagrammed and explain that limitation
+      - omit acceptance text unless a unique case cannot be meaningfully diagrammed and explain that limitation
       - omit package and item status, readiness, signatures, confirmation metadata, implementation findings, and handoff records
       - omit governance when current repository or project guidance already makes editing authority unambiguous; otherwise use only a minimal current access policy
       - record release, outcome, boundary, actors, capabilities, exclusions, measures, and optional default DCL
@@ -192,7 +192,7 @@ cases:
       - keep product.yaml minimal with context and direct links rather than logic in renamed fields
       - preserve the specified behavior in diagrams and split them when necessary instead of exporting logic to YAML
       - do not treat cross-capability scope, complexity, scenario count, or convenience as an acceptance exception
-      - omit acceptance.yaml when no unique non-diagrammable case exists
+      - omit acceptance sections when no unique non-diagrammable case exists
       - retain an actual non-diagrammable case only with irreducible detail, a concrete why_not_diagram reason, and an owner link
       - do not invent a unique case just to populate a template
       - remove duplicate text only after checking its requirements and referenced IDs remain represented

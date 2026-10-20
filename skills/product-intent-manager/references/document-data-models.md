@@ -109,18 +109,26 @@ needs only `I`. Embedded rows use the `EMBEDDED` tag in `KEY / RULE`.
 ```mermaid
 ---
 config:
-  theme: dark
+  theme: base
   flowchart:
     htmlLabels: true
     wrappingWidth: 680
     rankSpacing: 85
   themeVariables:
-    edgeLabelBackground: '#1f2c38'
+    edgeLabelBackground: '#121314'
+    background: '#121314'
+    primaryColor: '#0E1B33'
+    primaryBorderColor: '#536F98'
+    primaryTextColor: '#EFE7D2'
+    textColor: '#EFE7D2'
+    lineColor: '#536F98'
+    clusterBkg: '#121314'
+    clusterBorder: '#536F98'
   themeCSS: |
-    .pip-entity { width: 680px; border-collapse: collapse; background: #111827; color: #e5edf5; text-align: left; font-size: 14px; }
-    .pip-entity th, .pip-entity td { border: 1px solid #344556; padding: 8px 10px; text-align: left; }
-    .pip-entity th { background: #263544; color: #e5edf5; }
-    .pip-entity code { color: #e5edf5; font-family: monospace; }
+    .pip-entity { width: 680px; border-collapse: collapse; background: #0E1B33; color: #EFE7D2; text-align: left; font-size: 14px; }
+    .pip-entity th, .pip-entity td { border: 1px solid #536F98; padding: 8px 10px; text-align: left; }
+    .pip-entity th { background: #0E1B33; color: #EFE7D2; }
+    .pip-entity code { color: #EFE7D2; font-family: monospace; }
 ---
 flowchart TB
   P["<table class='pip-entity'><tr><th colspan='4'>DATA-101 · P · DOCUMENT KEY<br/>projects/{projectId}</th></tr><tr><th>ATTRIBUTE</th><th>TYPE</th><th>KEY / RULE</th><th>INDEX BADGE</th></tr><tr><td><code>memberCount</code></td><td>integer</td><td>Required; nonnegative; DERIVED</td><td></td></tr></table>"]
@@ -132,8 +140,8 @@ flowchart TB
   M -.->|"MIRROR · M.path.uid = V.path.uid<br/>M.path.projectId = V.path.projectId; M.role = V.role<br/>M: exactly 1 V; V: exactly 1 M"| V
   M -.->|"REF · M.path.uid = U.path.uid<br/>M: 1 live U; U: 0..many M"| U
   U -->|"PATH · U.path.uid = V.path.uid<br/>U: 0..many V; V: 1 live U"| V
-  classDef entity fill:#111827,stroke:#8ea0b3,color:#e5edf5
-  classDef ref fill:#1f2937,stroke:#8ea0b3,stroke-dasharray:5 4,color:#e5edf5
+  classDef entity fill:#0E1B33,stroke:#536F98,color:#EFE7D2
+  classDef ref fill:#0E1B33,stroke:#536F98,stroke-dasharray:5 4,color:#EFE7D2
   class P,M,V entity
   class U ref
 ```
@@ -152,18 +160,26 @@ trusted commands enforce the stated authorization and integrity themselves.
 ```mermaid
 ---
 config:
-  theme: dark
+  theme: base
   flowchart:
     htmlLabels: true
     wrappingWidth: 680
     rankSpacing: 85
   themeVariables:
-    edgeLabelBackground: '#1f2c38'
+    edgeLabelBackground: '#121314'
+    background: '#121314'
+    primaryColor: '#0E1B33'
+    primaryBorderColor: '#536F98'
+    primaryTextColor: '#EFE7D2'
+    textColor: '#EFE7D2'
+    lineColor: '#536F98'
+    clusterBkg: '#121314'
+    clusterBorder: '#536F98'
   themeCSS: |
-    .pip-entity { width: 680px; border-collapse: collapse; background: #111827; color: #e5edf5; text-align: left; font-size: 14px; }
-    .pip-entity th, .pip-entity td { border: 1px solid #344556; padding: 8px 10px; text-align: left; }
-    .pip-entity th { background: #263544; color: #e5edf5; }
-    .pip-entity code { color: #e5edf5; font-family: monospace; }
+    .pip-entity { width: 680px; border-collapse: collapse; background: #0E1B33; color: #EFE7D2; text-align: left; font-size: 14px; }
+    .pip-entity th, .pip-entity td { border: 1px solid #536F98; padding: 8px 10px; text-align: left; }
+    .pip-entity th { background: #0E1B33; color: #EFE7D2; }
+    .pip-entity code { color: #EFE7D2; font-family: monospace; }
     .badge.index { display: inline-block; white-space: nowrap; border: 1px solid #6ea8ff; border-radius: 4px; padding: 2px 5px; background: #162c48; color: #c6ddff; }
 ---
 flowchart TB
@@ -173,8 +189,8 @@ flowchart TB
   P -->|"PATH · P.path.projectId = D.path.projectId<br/>P: 0..many D; D: 1 live P"| D
   D -.->|"REF · D.authorUid = U.path.uid<br/>D: 1 historical UID, 0..1 live U<br/>U: 0..many authored D"| U
   D -.->|"SNAPSHOT · D.authorName from U.profile.displayName at creation<br/>source selected by D.authorUid = U.path.uid<br/>D: 1 original source, 0..1 live U; U: 0..many snapshots"| U
-  classDef entity fill:#111827,stroke:#8ea0b3,color:#e5edf5
-  classDef ref fill:#1f2937,stroke:#8ea0b3,stroke-dasharray:5 4,color:#e5edf5
+  classDef entity fill:#0E1B33,stroke:#536F98,color:#EFE7D2
+  classDef ref fill:#0E1B33,stroke:#536F98,stroke-dasharray:5 4,color:#EFE7D2
   class D,U entity
   class P ref
 ```
@@ -192,26 +208,34 @@ describe identity and provenance, not two separate author documents.
 ```mermaid
 ---
 config:
-  theme: dark
+  theme: base
   flowchart:
     htmlLabels: true
     wrappingWidth: 680
     rankSpacing: 85
   themeVariables:
-    edgeLabelBackground: '#1f2c38'
+    edgeLabelBackground: '#121314'
+    background: '#121314'
+    primaryColor: '#0E1B33'
+    primaryBorderColor: '#536F98'
+    primaryTextColor: '#EFE7D2'
+    textColor: '#EFE7D2'
+    lineColor: '#536F98'
+    clusterBkg: '#121314'
+    clusterBorder: '#536F98'
   themeCSS: |
-    .pip-entity { width: 680px; border-collapse: collapse; background: #111827; color: #e5edf5; text-align: left; font-size: 14px; }
-    .pip-entity th, .pip-entity td { border: 1px solid #344556; padding: 8px 10px; text-align: left; }
-    .pip-entity th { background: #263544; color: #e5edf5; }
-    .pip-entity code { color: #e5edf5; font-family: monospace; }
+    .pip-entity { width: 680px; border-collapse: collapse; background: #0E1B33; color: #EFE7D2; text-align: left; font-size: 14px; }
+    .pip-entity th, .pip-entity td { border: 1px solid #536F98; padding: 8px 10px; text-align: left; }
+    .pip-entity th { background: #0E1B33; color: #EFE7D2; }
+    .pip-entity code { color: #EFE7D2; font-family: monospace; }
 ---
 flowchart TB
   R["<table class='pip-entity'><tr><th colspan='4'>DATA-105 · R · DOCUMENT KEY<br/>receipts/{receiptId}</th></tr><tr><th>ATTRIBUTE</th><th>TYPE</th><th>KEY / RULE</th><th>INDEX BADGE</th></tr><tr><td><code>projectId</code></td><td>string</td><td>Required immutable target path component</td><td></td></tr><tr><td><code>documentId</code></td><td>string</td><td>Required immutable target path component</td><td></td></tr><tr><td><code>titleAtIssue</code></td><td>string</td><td>Required immutable SNAPSHOT</td><td></td></tr></table>"]
   D["REFERENCE · DATA-104 · D<br/>projects/{projectId}/documents/{documentId}"]
   R -.->|"REF · R.projectId = D.path.projectId<br/>R.documentId = D.path.documentId<br/>R: 1 target key, 0..1 live D; D: 0..many R"| D
   R -.->|"SNAPSHOT · R.titleAtIssue from D.title at issuance<br/>R.projectId = D.path.projectId; R.documentId = D.path.documentId<br/>R: 1 original source, 0..1 live D; D: 0..many snapshots"| D
-  classDef entity fill:#111827,stroke:#8ea0b3,color:#e5edf5
-  classDef ref fill:#1f2937,stroke:#8ea0b3,stroke-dasharray:5 4,color:#e5edf5
+  classDef entity fill:#0E1B33,stroke:#536F98,color:#EFE7D2
+  classDef ref fill:#0E1B33,stroke:#536F98,stroke-dasharray:5 4,color:#EFE7D2
   class R entity
   class D ref
 ```
@@ -233,16 +257,32 @@ It governs add, role change, and removal; `delta` is +1 only for absent-to-prese
 ```mermaid
 ---
 config:
-  theme: dark
+  theme: base
   sequence:
     noteAlign: left
     noteFontSize: 14
-    noteFontFamily: Arial
   themeCSS: |
-    .noteText { font-family: Arial !important; font-size: 14px !important; }
+    .noteText { font-size: 14px !important; }
   themeVariables:
-    noteBkgColor: '#242626'
-    noteTextColor: '#e5edf5'
+    noteBkgColor: '#0E1B33'
+    noteTextColor: '#EFE7D2'
+    background: '#121314'
+    primaryColor: '#0E1B33'
+    primaryBorderColor: '#536F98'
+    primaryTextColor: '#EFE7D2'
+    textColor: '#EFE7D2'
+    lineColor: '#536F98'
+    actorBkg: '#0E1B33'
+    actorBorder: '#536F98'
+    actorTextColor: '#EFE7D2'
+    actorLineColor: '#536F98'
+    signalColor: '#536F98'
+    signalTextColor: '#EFE7D2'
+    noteBorderColor: '#536F98'
+    labelBoxBkgColor: '#0E1B33'
+    labelBoxBorderColor: '#536F98'
+    labelTextColor: '#EFE7D2'
+    loopTextColor: '#EFE7D2'
 ---
 sequenceDiagram
   autonumber

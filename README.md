@@ -20,7 +20,8 @@ The Product Intent skill contains:
 - `SKILL.md`, the concise entrypoint;
 - `references/`, guidance loaded only when relevant;
 - `assets/product-intent-template/`, the three-file module-first starter;
-- `assets/acceptance-template.yaml`, exceptional non-diagrammable acceptance;
+- `assets/acceptance-template.yaml`, fields for exceptional non-diagrammable acceptance;
+- `assets/example-design/`, a local mockup the example PIP links to;
 - `assets/governance-template.yaml`, optional current editing authority;
 - `assets/example-product-intent-package/`, a proportional worked example; and
 - `evals/cases.yaml`, realistic behavior cases.
@@ -60,12 +61,12 @@ All product logic belongs to named modules. The smallest starter has three files
 ```text
 product.yaml
 architecture/stack-context.md
-modules/primary-capability/experience/user-flows.md
+modules/primary-capability/experience-primary-capability.md
 ```
 
 Keep `product.yaml` minimal: product context and direct links, not rules, gates,
 or scenario lists. Diagrams own behavior and observable outcomes. Omit
-`acceptance.yaml` unless a unique case cannot be meaningfully diagrammed;
+acceptance text unless a unique case cannot be meaningfully diagrammed;
 explain why, link its owner, and retain only that irreducible case. The same
 restriction applies to inline acceptance; any qualifying case stays with its
 module owner, not in the root product record. Complexity or convenience is not an
@@ -109,9 +110,8 @@ when they add distinct product meaning. Format 7 does not require an artifact
 index, coverage matrix, central traceability graph, change log, journey
 registry, readiness ledger, or a formal not-applicable decision.
 
-A package that grows into several product modules uses flat module folders of
-topic-named `data-*`, `experience-*`, and `logic-*` files instead of
-artifact-type folders. Large records open with a small overview diagram followed
+Each module folder is flat, holding topic-named `data-*`, `experience-*`, and
+`logic-*` files rather than artifact-type subfolders. Large records open with a small overview diagram followed
 by lettered detail parts, and each record keeps its own ID number.
 
 An optional `dcl` mapping in `product.yaml` states the product-wide Development

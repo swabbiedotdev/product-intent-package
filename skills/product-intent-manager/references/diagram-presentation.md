@@ -175,10 +175,10 @@ Use nearby Markdown links when the viewer cannot preserve links inside HTML
 labels; this does not require duplicating the definition. A diagram export
 should retain the fields, badges, definitions, and role mappings together.
 
-The [Counter data model](../assets/example-product-intent-package/modules/counter/data/data-model.md)
-demonstrates the complete dark table style, per-attribute badges, an attached
+The [Counter data model](../assets/example-product-intent-package/modules/counter/data-counter.md)
+demonstrates the complete table style, per-attribute badges, an attached
 index compartment, and explicit cardinality. Its
-[sequences](../assets/example-product-intent-package/modules/counter/sequences/sequences.md)
+[sequences](../assets/example-product-intent-package/modules/counter/logic-counter.md)
 reference that same index without copying its definition. No lease or lock
 compartment is needed because the example has no such persisted mechanism.
 
@@ -237,15 +237,25 @@ config:
     primaryBorderColor: "#536F98"
     primaryTextColor: "#EFE7D2"
     lineColor: "#536F98"
+    noteBkgColor: '#0E1B33'
+    noteTextColor: '#EFE7D2'
+    textColor: '#EFE7D2'
+    actorBkg: '#0E1B33'
+    actorBorder: '#536F98'
+    actorTextColor: '#EFE7D2'
+    actorLineColor: '#536F98'
+    signalColor: '#536F98'
+    signalTextColor: '#EFE7D2'
+    noteBorderColor: '#536F98'
+    labelBoxBkgColor: '#0E1B33'
+    labelBoxBorderColor: '#536F98'
+    labelTextColor: '#EFE7D2'
+    loopTextColor: '#EFE7D2'
   sequence:
     noteAlign: left
     noteFontSize: 14
-    noteFontFamily: Arial
   themeCSS: |
-    .noteText { font-family: Arial !important; font-size: 14px !important; }
-  themeVariables:
-    noteBkgColor: '#242626'
-    noteTextColor: '#e5edf5'
+    .noteText { font-size: 14px !important; }
 ---
 sequenceDiagram
   autonumber
@@ -292,9 +302,19 @@ includes input provenance, priority, the exact limit comparison, and each result
 ```mermaid
 ---
 config:
-  theme: dark
+  theme: base
   flowchart:
     wrappingWidth: 280
+  themeVariables:
+    background: '#121314'
+    primaryColor: '#0E1B33'
+    primaryBorderColor: '#536F98'
+    primaryTextColor: '#EFE7D2'
+    textColor: '#EFE7D2'
+    lineColor: '#536F98'
+    edgeLabelBackground: '#121314'
+    clusterBkg: '#121314'
+    clusterBorder: '#536F98'
 ---
 flowchart TD
   INPUT["RULE-201 · Publication decision<br/>editor: current membership.role = editor<br/>state: persisted document.state<br/>used: current period's published count<br/>limit: PUBLISH_LIMIT setting, same period"]

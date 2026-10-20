@@ -18,8 +18,8 @@ or normative `experience/` tree outside modules.
 
 The root owns product context, physical topology, optional editing authority,
 and navigation—not behavioral rules. Root overview diagrams link module owners
-and introduce no independent logic. Modules are required; extra files and
-subdivisions are optional. A small product can have one small module.
+and introduce no independent logic. Modules are required; extra files are
+optional, and each module folder stays flat. A small product can have one small module.
 **Strongly prefer module-first organization in overall documents too.** Readers
 enter a PIP through a module, so organize `stack-context.md` and other existing
 overviews by the same module names, with direct owner links. A compact whole-
@@ -190,10 +190,10 @@ The smallest starter has three files, with behavior already inside a module:
 ```text
 product.yaml
 architecture/stack-context.md
-modules/primary-capability/experience/user-flows.md
+modules/primary-capability/experience-primary-capability.md
 ```
 
-**Keep `product.yaml` and `acceptance.yaml` minimal. Neither is a home for logic.**
+**Keep `product.yaml` and acceptance text minimal. Neither is a home for logic.**
 `product.yaml` contains product context: identity, release, outcome, boundary,
 actors, concise capabilities, exclusions, measures, optional DCL, and direct
 links. Do not accumulate rules, gates, conditions, algorithms, retry policies,
@@ -205,11 +205,11 @@ Rename `primary-capability` to the actual capability. Keep the module's public
 boundary in its owning diagram when that suffices; do not require a separate
 boundary file or every artifact type.
 
-Omit `acceptance.yaml` by default. Retain only unique acceptance cases that
+Omit acceptance text by default. Retain only unique acceptance cases that
 cannot be represented meaningfully in a diagram or its attached notes, with a
 brief reason why and a direct link to the relevant owner. The same exception
 applies wherever acceptance is written; keep a qualifying exception in its
-module, beside its owner or in a small module-local acceptance file, not in the
+module, in an `Acceptance exceptions` section of the owning file, not in the
 root product record. Complexity, many branches, cross-capability scope, or convenience
 are not reasons to put logic in either file. Split or extend diagrams instead.
 Before adding a line, ask: “Is this necessary product context, or genuinely

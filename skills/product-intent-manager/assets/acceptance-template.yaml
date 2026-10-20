@@ -1,13 +1,14 @@
-# Omit this file unless a unique acceptance case cannot be meaningfully
-# represented in a diagram or attached note. Keep only irreducible detail.
-# If needed, place it inside its owning module, never at the PIP root.
+# Fields for an `Acceptance exceptions` section. Omit the section unless a
+# unique acceptance case cannot be meaningfully represented in a diagram or
+# attached note. Put it as a fenced yaml block in the owning module's logic-*
+# or experience-* file, never at the PIP root. Keep only irreducible detail.
 # Complexity, many branches, and convenience are not reasons to use this file.
 # Do not copy diagrammed logic, create an exhaustive test plan, or ship it empty.
 scenarios: []
 # - id: ACC-001
 #   name: ''
 #   why_not_diagram: ''  # Concrete representation limitation, not preference.
-#   verifies: [sequences/sequences.md#owning-sequence]
+#   verifies: [logic-topic.md#owning-sequence]
 #   given: []
 #   when: []
 #   then: []

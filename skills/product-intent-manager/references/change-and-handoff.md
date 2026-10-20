@@ -372,12 +372,12 @@ without inventing controls the actual response does not need.
 ### 3. Observable acceptance and engineering discretion
 
 Confirm that every in-scope capability has recognizable success and material
-failure in its owning diagrams. Inspect `product.yaml` and `acceptance.yaml`
+failure in its owning diagrams. Inspect `product.yaml` and any acceptance sections
 specifically for regression: keep only necessary product context, direct links,
 or unique non-diagrammable acceptance cases with a concrete reason. Do not accept
 logic hidden under `outcome`, `boundary`, `success_measures`, or given/when/then.
 More detail, complexity, or convenience does not justify textual acceptance.
-An absent acceptance file is normal; do not require a YAML checklist when the
+An absent acceptance section is normal; do not require a YAML checklist when the
 diagram already expresses the outcome. Preserve all meaning when moving text.
 
 An exact current mockup target must cover its required visible states and

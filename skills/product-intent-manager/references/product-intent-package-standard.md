@@ -28,7 +28,7 @@ The default package is:
 | --- | --- |
 | `product.yaml` | Minimal product context: name, release, outcome, boundary, actors, capabilities, exclusions, measures, optional DCL, and direct links; no behavioral logic |
 | `architecture/stack-context.md` | Physical clients, services, managed platforms, stores, external systems, responsibility, owned state, deployment placement, and connections |
-| `modules/primary-capability/experience/user-flows.md` | The initial module's actor goals, actions, visible states, choices, failure, recovery, and outcomes |
+| `modules/primary-capability/experience-primary-capability.md` | The initial module's actor goals, actions, visible states, choices, failure, recovery, and outcomes |
 
 Rename `primary-capability` to the actual capability and populate these files.
 This is a minimal starter, not a limit on distinct logic owners. Do not pre-create optional directories or empty
@@ -39,19 +39,19 @@ Use these conventional paths when an optional artifact is needed:
 
 | Optional artifact | Conventional path |
 | --- | --- |
-| Unique acceptance cases that cannot be meaningfully diagrammed | `modules/<module>/acceptance.yaml`, only under the exception below |
+| Unique acceptance cases that cannot be meaningfully diagrammed | An `Acceptance exceptions` section in the owning `logic-*` or `experience-*` file, only under the exception below |
 | Editing authority | `governance.yaml` |
-| Intended journey | `modules/<module>/experience/journeys/JOURNEY-*.md` |
-| Screen detail or local mockup | `modules/<module>/experience/screens.yaml`, `modules/<module>/experience/mockups/` |
-| Product-specific design patterns | `modules/<module>/experience/design-system.md` or a module-owned link to the authoritative design system |
-| Shared decisions or state machines | `modules/<module>/behavior/rules.md`, `modules/<module>/behavior/state-machines.md`; local decision tables only for the compact-matrix exception below |
-| Data model or product-significant schema | `modules/<module>/data/data-model.md`, `modules/<module>/data/schema.yaml` |
-| Shared, external, or product-significant contracts | `modules/<module>/contracts/contracts.yaml` or `modules/<module>/contracts/openapi.yaml` |
-| Runtime sequences | `modules/<module>/sequences/sequences.md` |
-| Measurable quality constraints | `modules/<module>/quality/constraints.yaml` |
+| Intended journey | `modules/<module>/experience-<journey>.md` |
+| Screen detail | The surface in the owning `experience-*` flow; layout and visual form stay in the linked mockup outside the PIP |
+| Product-specific design patterns | A module-owned link to the authoritative design system |
+| Shared decisions or state machines | `modules/<module>/logic-<topic>.md`, beside the sequences that apply them; local decision tables only for the compact-matrix exception below |
+| Data model or product-significant schema | `modules/<module>/data-<topic>.md` |
+| Shared, external, or product-significant contracts | The `logic-*` file whose sequence uses the contract, or a link to an authoritative external contract source |
+| Runtime sequences | `modules/<module>/logic-<topic>.md` |
+| Measurable quality constraints | A targets section in the `logic-*` file whose sequences they measure |
 | Complex deployment or coordination overview | `architecture/deployment.md`, `architecture/coordination.md`; topology and links only, with rules owned in modules |
-| Public module boundary | `modules/<module>/boundary.md`, or a section of an existing module diagram |
-| Cross-module runtime composition | `modules/<owner>/workflows/<process>.md`, or an existing sequence inside that module |
+| Public module boundary | A boundary section of the module's `logic-*` file |
+| Cross-module runtime composition | `modules/<owner>/logic-<process>.md`, or an existing sequence inside that module |
 
 Sequence diagrams are often sufficient to convey all needed system logic,
 including states, guards, and recovery. State machine diagrams are optional:
@@ -67,8 +67,40 @@ and ownership of each artifact.
 All product logic must live inside named `modules/<module>/` owners. Keep one
 canonical PIP and one minimal root `product.yaml`. This is the default at every
 product size; a small product may have one module. The module's internal file
-names and subdivision are flexible, but placing normative content outside
-modules is not an equivalent organization.
+names are flexible within the flat layout below, but placing normative
+content outside modules is not an equivalent organization.
+
+### Module file layout
+
+Each module folder holds its documents directly, with no subfolders. Readers
+and agents find the right file faster by topic than by artifact type, and
+type folders split one process across several files.
+
+```text
+product.yaml
+architecture/stack-context.md
+modules/<module>/data-<topic>.md
+modules/<module>/experience-<topic>.md
+modules/<module>/logic-<topic>.md
+```
+
+- Each file uses one of three prefixes: `data-*` for the module's ERDs,
+  `experience-*` for user flows, and `logic-*` for sequences, rules, and state
+  machines, whichever fits the process.
+- Name each file by what it covers, such as `logic-permissions.md` or
+  `experience-admin-stores.md`. A file may be broad or narrow but stays inside
+  its module.
+- Keep `RULE-*` records in the logic file beside the sequences that apply them.
+  Put a module's API or event contracts and its public boundary in the logic
+  file whose sequences own them, and measured quality targets in a short targets
+  section of the logic file whose sequences they measure.
+- Prefer giving every module all three document types as it grows. A
+  back-end-only module can use a short `experience-*` file with one diagram
+  showing where its results appear and linking to the flows that own those
+  surfaces; that is navigation content, not a placeholder.
+
+Package-wide `product.yaml`, `governance.yaml`, and the `architecture/` overviews
+stay at the root.
 
 Root content is limited to product context, optional editing authority,
 physical topology, and navigation or reference-only overviews. Root views may
@@ -469,16 +501,17 @@ purpose-specific links where a reader needs them.
 
 Observable outcomes in the owning diagrams provide acceptance meaning. Do not
 copy their branches, rules, gates, or failure/recovery behavior into
-`product.yaml` or `acceptance.yaml`, even as given/when/then examples. Neither
-file is a secondary behavioral specification or an exhaustive test catalogue.
+`product.yaml` or an acceptance section, even as given/when/then examples.
+Neither is a secondary behavioral specification or an exhaustive test catalogue.
 
-Omit `acceptance.yaml` unless a unique acceptance case cannot be represented
+Omit acceptance text unless a unique acceptance case cannot be represented
 meaningfully in a diagram or its attached notes. Keep only the irreducible case,
 a brief `why_not_diagram` explanation, and a direct `verifies` link to the
 relevant owner. The explanation must identify a real representation limitation,
 not merely say that prose is easier. Keep a qualifying case beside its module
-owner or in that module's acceptance file, not inline in the root product
-record. Do not repeat the same case in both places.
+owner, in an `Acceptance exceptions` section of the owning `logic-*` or
+`experience-*` file using the fields in `assets/acceptance-template.yaml`, not
+inline in the root product record. Do not repeat the same case in both places.
 
 More scenarios, cross-capability scope, complex gates, or a crowded diagram do
 not qualify. Extend or split the owning diagrams. Exact quality values and
@@ -486,11 +519,11 @@ contract shapes keep their existing structured owners; their presence does not
 justify another acceptance copy. Necessary non-diagrammable evaluation context
 may be textual, but its runtime conditions and behavior remain diagram-owned.
 
-Before adding text to either file, ask whether it is essential product context
+Before adding acceptance text, ask whether it is essential product context
 or a genuinely non-diagrammable acceptance case. Otherwise move it to its diagram
 owner or omit duplication. When simplifying existing packages, preserve each
 requirement in its owner before removing redundant YAML; preserve referenced
-IDs and links where needed. Do not create empty acceptance files or require one
+IDs and links where needed. Do not create empty acceptance sections or require one
 case per capability, branch, or diagram. Test plans, fixtures, execution results,
 and readiness reports belong outside the PIP.
 

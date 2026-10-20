@@ -1,8 +1,0 @@
-rules:
-  - id: RULE-001
-    name: Persist and present the counter safely
-    applies_to:
-      - CAP-001
-    defined_by:
-      - ../sequences/sequences.md#seq-001-increment-once
-      - ../sequences/sequences.md#seq-002-load-or-reconcile-progress

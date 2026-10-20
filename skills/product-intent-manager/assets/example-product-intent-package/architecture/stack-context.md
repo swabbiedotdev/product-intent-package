@@ -2,7 +2,7 @@
 
 ## Module: Counter
 
-Module owner: [Counter](../modules/counter/experience/user-flows.md#flow-001-read-and-increment-the-counter).
+Module owner: [Counter](../modules/counter/experience-counter.md#flow-001-read-and-increment-the-counter).
 This section is the Counter module's physical context, not a separate runtime
 boundary. Counter is the only module in this small example.
 
@@ -11,7 +11,17 @@ boundary. Counter is the only module in this small example.
 ```mermaid
 ---
 config:
-  theme: dark
+  theme: base
+  themeVariables:
+    background: '#121314'
+    primaryColor: '#0E1B33'
+    primaryBorderColor: '#536F98'
+    primaryTextColor: '#EFE7D2'
+    textColor: '#EFE7D2'
+    lineColor: '#536F98'
+    edgeLabelBackground: '#121314'
+    clusterBkg: '#121314'
+    clusterBorder: '#536F98'
 ---
 flowchart LR
   ACTOR_001["ACTOR-001 User"] -->|reads and increments| ARCH_001
@@ -24,9 +34,9 @@ flowchart LR
   end
 ```
 
-The [Counter module sequences](../modules/counter/sequences/sequences.md)
+The [Counter module sequences](../modules/counter/logic-counter.md)
 own consequential communication and atomicity; the
-[module's quality constraints](../modules/counter/quality/constraints.yaml)
+[module's quality targets](../modules/counter/logic-counter.md#quality-targets)
 own persistence across deployment and rollback. This view maps physical owners.
 
 ### Current rationale
