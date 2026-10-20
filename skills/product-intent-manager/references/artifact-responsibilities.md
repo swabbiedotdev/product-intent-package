@@ -22,7 +22,7 @@ triggered:
 | Screen records | Surface-specific content, actions, validation, responsive behavior, or visible states need detail beyond the flow or linked design |
 | Design records | Repeated visual, content, component, interaction, responsive, or accessibility rules constrain the product |
 | Rule/decision diagram | Conditions, priorities, permissions, or calculations are explicitly consumed by documented processes and need a shared owner beyond a process-local branch |
-| State machine | A product or domain object has meaningful lifecycle states and transitions |
+| State machine | A higher-level systems view or additional lifecycle information is needed that the sequences do not already convey clearly |
 | Data model / ERD | Entity identity, ownership, relationships, or cardinality affect the product |
 | Schema detail | Fields, constraints, retention, or compatibility are product-significant |
 | API, event, or integration contract | A boundary is shared, external, compatibility-sensitive, or product-significant |
@@ -40,11 +40,12 @@ Do not create a file merely to record `not applicable`.
 | --- | --- | --- |
 | Stack context | Which physical systems exist, what does each own, where does it run, and how do they connect? | Screen navigation, ordered messages, entity fields, detailed lifecycle transitions |
 | User flow | What does the actor do, see, choose, and experience next, and which surfaces need design? | APIs, services, database work, retries, algorithms, and other internal execution |
-| State machine | Which stable lifecycle states and process-triggered transitions are valid? | Each process's ordered calls, retries, fallbacks, and screen navigation |
+| State machine (optional) | Which stable lifecycle states and process-triggered transitions need a higher-level view beyond the sequences? | Each process's ordered calls, retries, fallbacks, and screen navigation |
 | Data model / ERD | Which concepts or persisted entities exist, and how do they relate? | Navigation, message order, process transitions, and a full implementation schema |
-| Sequence | How does one consequential process execute across physical systems? | Screen topology, complete entity modeling, and the full object lifecycle |
+| Sequence | How does one consequential process execute across physical systems, including its state changes and guards? | Screen topology, complete entity modeling, and unrelated lifecycle transitions |
 
-These five views cover ordinary application structure and execution. A focused
+These are responsibilities, not a required set of five diagrams. Sequences
+often convey all needed system logic without a separate state machine. A focused
 decision flowchart can own shared rule logic; it is not another mandatory view.
 A compact decision matrix is the narrow exception described in the
 [diagram-first standard](product-intent-package-standard.md#diagram-first-product-logic).
@@ -80,7 +81,7 @@ orchestration module.
 | Actor action, navigation, visible outcome, visible recovery, surface inventory | User flow |
 | Surface-specific content and actions | Screen or linked design record, when needed |
 | Condition combinations that select an outcome | Owning sequence branch or linked rule/decision diagram |
-| Valid states and process-triggered transitions | State machine |
+| Valid states and process-triggered transitions | Owning sequence; a linked state machine only when a higher-level lifecycle view adds needed information |
 | Ordered calls, events, input provenance, database table use and intended access paths, retries, fallbacks, and runtime failure | Sequence |
 | Physical responsibility, owned state, provider, deployment placement, trust boundary | Stack context |
 | Cross-process contenders, coordination scope, mechanism, and protected resource | Stack-context coordination overlay |
@@ -234,8 +235,10 @@ they constrain. A publication rule does not silently become a retrieval rule.
 
 Use the physical client as a participant; a `SCREEN-*` is a visible starting or
 resulting surface, not a runtime lifeline. Split sequences only when message
-order, ownership, or recovery materially differs. A sequence may name the state
-transition it causes but must not restate the lifecycle model.
+order, ownership, or recovery materially differs. Show the state transitions
+and guards needed to understand the process in its sequence. When a separate
+state machine owns the lifecycle model, reference it rather than duplicating
+that model.
 
 ### Database access in sequences
 
@@ -338,7 +341,18 @@ recovery. Do not copy that order into an ERD or coordination overlay.
 
 ## State machines
 
-A state machine owns stable lifecycle states, triggers, guards, permitted and
+State machine diagrams are optional. Use one only when higher-level systems
+logic or needed additional information is not already clear in the sequences:
+for example, how several processes interact to permit or forbid lifecycle
+transitions. A sequence is often adequate for all needed system logic. Status
+fields, async work, multiple processes, or a higher DCL do not automatically
+justify another diagram.
+
+Without a state machine, keep required states, transitions, guards, and failure
+and recovery behavior in the owning sequences; optionality does not remove
+required logic. Do not add a state machine that merely repeats those sequences.
+
+When needed, a state machine owns stable lifecycle states, triggers, guards, permitted and
 forbidden transitions, and durable or product-significant failure and recovery
 states. It is the high-level map of how the processes represented by sequences
 interact.

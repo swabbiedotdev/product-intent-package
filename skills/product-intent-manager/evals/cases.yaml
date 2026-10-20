@@ -159,11 +159,26 @@ cases:
       - keep actor actions, surfaces, visible outcomes, and recovery in the user flow
       - make surface boundaries clear enough to identify needed mockups and state variants
       - keep ordered runtime logic, input provenance, retries, and fallbacks in focused sequences
-      - keep stable lifecycle states and process interaction in state machines
+      - add a state machine only when a higher-level systems view or additional lifecycle information is needed beyond what the sequences clearly convey
       - omit polling, heartbeats, lease renewal, retries, and other non-state-changing loops from state machines
       - keep entities and relationships in the data model or ERD
       - use stack context for physical participants, deployment, responsibilities, and owned state
       - preserve context with direct references instead of copied logic
+
+  - id: optional-state-machine
+    prompt: >-
+      Review diagram coverage in a PIP. One module's sequences already clearly
+      show all required states, guards, transitions, failures, and recovery.
+      Another module has several processes whose legal lifecycle interactions
+      remain unclear when reading the individual sequences. Should each module
+      get a state machine diagram?
+    should_activate: true
+    must:
+      - leave the first module sequence-only because it already conveys all needed system logic
+      - recommend an optional higher-level state machine for the second module only to clarify the missing lifecycle interactions
+      - preserve required state and transition logic even when no state machine is added
+      - link the higher-level view to owning sequences without copying their detailed execution logic
+      - do not use status fields, async work, process count, or DCL alone as a requirement for a state machine
 
   - id: minimal-product-and-acceptance-records
     prompt: >-

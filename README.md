@@ -146,13 +146,17 @@ The five diagram responsibilities remain distinct:
   and connections;
 - user flow: actor actions, user-visible surfaces, visible outcomes, and
   recovery—the inventory of what needs mockups;
-- state machine: valid lifecycle states and high-level process interaction;
+- optional state machine: valid lifecycle states and high-level process interaction
+  when a separate view adds needed information;
 - data model/ERD: concepts, persisted records, relationships, and product-
   significant constraints; and
 - sequence: detailed ordered runtime logic, input provenance, code ownership,
   retries, fallbacks, and recovery for one consequential process.
 
-State machines and user flows intentionally omit sequence-level detail.
+Sequence diagrams often convey all needed system logic. Add a state machine
+only when needed higher-level systems logic or additional lifecycle information
+is not already clear in the sequences. State machines and user flows
+intentionally omit sequence-level detail.
 Deployment normally belongs in stack context and becomes separate only when its
 topology is too complex to remain readable.
 

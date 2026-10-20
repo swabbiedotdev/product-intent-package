@@ -53,6 +53,12 @@ Use these conventional paths when an optional artifact is needed:
 | Public module boundary | `modules/<module>/boundary.md`, or a section of an existing module diagram |
 | Cross-module runtime composition | `modules/<owner>/workflows/<process>.md`, or an existing sequence inside that module |
 
+Sequence diagrams are often sufficient to convey all needed system logic,
+including states, guards, and recovery. State machine diagrams are optional:
+add one only when a higher-level systems view or additional lifecycle information
+is needed that the sequences do not already convey clearly, not simply because
+the product has statuses or asynchronous processes.
+
 See [Artifact Responsibilities](artifact-responsibilities.md) for the trigger
 and ownership of each artifact.
 

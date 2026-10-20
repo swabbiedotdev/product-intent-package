@@ -69,7 +69,7 @@ Keep these boundaries clear from the start:
   retries, fallbacks, timeouts, partial failures, recovery, polling, heartbeats,
   lease renewal, and the tables and access paths used by consequential database
   steps.
-- **State machines show high-level process interaction:** stable lifecycle states
+- **State machines are optional higher-level views:** stable lifecycle states
   and the transitions produced by the processes represented in sequence
   diagrams. They intentionally omit each process's internal logic and routine
   self-loops that do not change a stable lifecycle state.
@@ -81,6 +81,12 @@ Keep these boundaries clear from the start:
 - **Decision diagrams hold shared rule logic:** exact conditions, priority,
   calculations, and allowed/refused outcomes that need a reusable owner. Put a
   process-local gate directly in its sequence instead of creating another file.
+
+Sequence diagrams are often adequate for conveying all needed system logic,
+including state changes, guards, and recovery. Add a state machine only when a
+higher-level systems view or additional lifecycle information is needed that
+the sequences do not already convey clearly. Having statuses, async work, or
+multiple processes does not by itself require one; do not add a duplicate view.
 
 Missing sequence-level detail in a state machine or user flow is correct. Link
 to the owning sequence instead of copying its internals into those views.
